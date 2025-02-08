@@ -3,7 +3,7 @@ const { getStockData } = require('../services/stockService');
 
 // Variables globales
 let lastPrice = null;           // Último precio notificado
-const thresholdPrice = 120;     // Precio umbral para activar la notificación
+const thresholdPrice = 720;     // Precio umbral para activar la notificación
 const discordWebhookUrl = 'https://discord.com/api/webhooks/1329620430688092273/q4iexUQCIZnlgKqJuRR7o7CB4nsbNWqIqdhA3J4XQj-tBBXeuPWd-BzRCRbRlVJirDwv';
 
 /**

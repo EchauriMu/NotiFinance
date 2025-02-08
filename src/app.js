@@ -52,7 +52,7 @@ const startPriceMonitoring = async () => {
   setInterval(async () => {
     console.log('Ejecutando verificación de precios...');
     await checkAndNotifyPrice();  // Llamamos al controlador para verificar el precio y enviar notificación si es necesario
-  }, 10000);  // 30 segundos
+  }, 30000);  // 30 segundos
 };
 
 // Iniciar el monitoreo de precios
