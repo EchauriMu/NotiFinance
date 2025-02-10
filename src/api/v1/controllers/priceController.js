@@ -1,39 +1,39 @@
 const axios = require('axios');
-const { getStockData } = require('../services/stockService');
+const { getChainlinkPrice } = require('../services/stockService');
 
-// Variables globales
-let lastPrice = null;           // Último precio notificado
-const thresholdPrice = 720;     // Precio umbral para activar la notificación
+// Variable global para recordar el último precio notificado
+let lastPrice = null;
+
+// Definimos el umbral en MXN (único valor, por ejemplo, 380 MXN)
+const thresholdPrice = 5.20; 
+
+// URL del webhook de Discord
 const discordWebhookUrl = 'https://discord.com/api/webhooks/1329620430688092273/q4iexUQCIZnlgKqJuRR7o7CB4nsbNWqIqdhA3J4XQj-tBBXeuPWd-BzRCRbRlVJirDwv';
 
 /**
- * Función que verifica el precio de la acción y envía una notificación si:
- *  - El precio supera el umbral definido.
- *  - El precio es diferente al último notificado.
- * La verificación se realiza cada 30 segundos (configurada en el server).
+ * Función que verifica el precio de Chainlink y envía notificación si:
+ * - El precio supera el umbral.
+ * - El precio es diferente al último notificado.
  */
 const checkAndNotifyPrice = async () => {
   try {
     console.log('==================== INICIANDO VERIFICACIÓN DE PRECIO ====================');
     
-    // Obtiene el precio actual de la acción
-    const currentPrice = await getStockData();
-    console.log(`Precio actual obtenido: $${currentPrice}`);
+    // Obtiene el precio actual de Chainlink en MXN
+    const currentPrice = await getChainlinkPrice();
+    console.log(`Precio actual de Chainlink: $${currentPrice.toFixed(2)} MXN`);
     
-    // Verifica si el precio supera el umbral
+    // Si el precio supera el umbral y es distinto al último notificado, se envía la notificación
     if (currentPrice > thresholdPrice) {
-      // Si es la primera vez o el precio ha cambiado respecto al último notificado
       if (lastPrice === null || currentPrice !== lastPrice) {
-        console.log(`El precio $${currentPrice} es mayor al umbral de $${thresholdPrice} y es diferente al último notificado.`);
+        console.log(`El precio $${currentPrice.toFixed(2)} MXN es mayor al umbral de $${thresholdPrice} MXN y es diferente al último notificado.`);
         await sendDiscordNotification(currentPrice);
-        lastPrice = currentPrice;  // Actualizamos el último precio notificado
+        lastPrice = currentPrice;
       } else {
-        console.log(`El precio $${currentPrice} es mayor al umbral, pero no ha cambiado desde el último notificado ($${lastPrice}). No se enviará mensaje.`);
+        console.log(`El precio $${currentPrice.toFixed(2)} MXN es mayor al umbral, pero no ha cambiado desde el último notificado ($${lastPrice.toFixed(2)} MXN).`);
       }
     } else {
-      console.log(`El precio actual $${currentPrice} no supera el umbral de $${thresholdPrice}.`);
-      // Opcional: Reiniciamos lastPrice si el precio cae por debajo del umbral,
-      // para que al volver a superar el umbral se envíe un mensaje.
+      console.log(`El precio actual $${currentPrice.toFixed(2)} MXN no supera el umbral de $${thresholdPrice} MXN.`);
       lastPrice = null;
     }
     
@@ -44,26 +44,20 @@ const checkAndNotifyPrice = async () => {
 };
 
 /**
- * Función que envía una notificación a Discord usando un webhook.
- * 
- * @param {number} price - El precio actual de la acción a incluir en la notificación.
+ * Función que envía una notificación a Discord con el precio recibido.
+ * @param {number} price - Precio actual en MXN
  */
 const sendDiscordNotification = async (price) => {
   try {
-    console.log(`************** Enviando notificación a Discord con el precio: $${price} **************`);
+    console.log(`************** Enviando notificación a Discord con el precio: $${price.toFixed(2)} MXN **************`);
     
-    // Crea el mensaje que se enviará a Discord
     const message = {
-      content: `La acción NVDA ha superado el umbral. El nuevo precio es $${price}.`
+      content: `🔗 Chainlink ha superado el umbral. El nuevo precio es $${price.toFixed(2)} MXN.`
     };
     
-    // Realiza la solicitud POST al webhook de Discord para enviar la notificación
     await axios.post(discordWebhookUrl, message);
     
-    // Log vistoso para resaltar el envío exitoso
-    console.log('\n🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀');
-    console.log('🎉🎉 Notificación enviada a Discord exitosamente! 🎉🎉');
-    console.log('🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀\n');
+    console.log('\n🚀🚀🚀 Notificación enviada a Discord exitosamente! 🚀🚀🚀\n');
     
   } catch (error) {
     console.error('Error al enviar la notificación a Discord:', error.message);

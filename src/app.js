@@ -45,15 +45,26 @@ app.get(`${api}`, (req, res) => {
   );
 });
 
-// Ejecutar la verificación del precio al iniciar el servidor
 const startPriceMonitoring = async () => {
   console.log('Iniciando monitoreo de precios...');
-  await checkAndNotifyPrice(); // Ejecuta inmediatamente
+  
+  // Ejecuta inmediatamente la primera vez
+  await checkAndNotifyPrice();
+
   setInterval(async () => {
-    console.log('Ejecutando verificación de precios...');
-    await checkAndNotifyPrice();  // Llamamos al controlador para verificar el precio y enviar notificación si es necesario
-  }, 30000);  // 30 segundos
+    const now = new Date();
+    const hours = now.getHours();
+
+    // Verifica si está dentro del horario permitido (6 AM - 10 PM)
+    if (hours >= 6 && hours <= 22) {
+      console.log('Ejecutando verificación de precios...');
+      await checkAndNotifyPrice();  // Llamamos al controlador para verificar el precio y enviar notificación si es necesario
+    } else {
+      console.log('⏳ Fuera del horario permitido (6 AM - 10 PM). No se verificará el precio.');
+    }
+  }, 30000);  // Ejecuta cada 120 segundos (2 minutos)
 };
+
 
 // Iniciar el monitoreo de precios
 startPriceMonitoring();

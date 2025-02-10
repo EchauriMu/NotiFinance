@@ -1,46 +1,32 @@
 const axios = require('axios');
 
-/**
- * Función para obtener los datos de la acción de Meta desde la API de Twelve Data.
- * Se obtiene el precio de cierre más reciente.
- * 
- * @returns {Promise<number>} El último precio de cierre de la acción de Meta.
- */
-const getStockData = async () => {
-  // URL base de la API de Twelve Data
-  const url = 'https://api.twelvedata.com/time_series';
-  
-  // Parámetros de la solicitud: 
-  // símbolo de la acción (META), intervalo (1 minuto), clave API y zona horaria.
-  const params = {
-    symbol: 'META', // Cambiado a la acción de Meta
-    interval: '1min',
-    apikey: 'e02c4efdc3994bcea6d15a6758f0ca6d',
-    timezone: 'America/Mexico_City'
-  };
-
+const getChainlinkPrice = async () => {
   try {
-    // Realiza la solicitud GET a la API de Twelve Data
-    const response = await axios.get(url, { params });
-    
-    // Extrae los valores de la respuesta
-    const { values } = response.data;
-    
-    // Verifica que la respuesta contenga datos
-    if (values && values.length > 0) {
-      // Obtiene el primer valor, que es el más reciente (última acción)
-      const latestData = values[0];
-      
-      // Retorna el precio de cierre convertido a número
-      return parseFloat(latestData.close);
-    } else {
-      throw new Error('No se encontraron datos disponibles');
+    // Obtener precio de Chainlink en USD
+    const chainlinkResponse = await axios.get('https://api.twelvedata.com/quote', {
+      params: {
+        symbol: 'DOGE/USD',
+        apikey: 'bcedf25a07df483c84a4d3225afefdbc'
+      }
+    });
+
+    if (!chainlinkResponse.data || !chainlinkResponse.data.close) {
+      throw new Error('La API de Twelve Data no devolvió un precio válido.');
     }
+
+    const chainlinkPriceUSD = parseFloat(chainlinkResponse.data.close);
+    console.log(`💰 Precio de DOGE en USD: $${chainlinkPriceUSD}`);
+
+    // Multiplicar por 20.57 en lugar de consultar la API de conversión
+    const conversionRate = 20.57;
+    const chainlinkPriceMXN = chainlinkPriceUSD * conversionRate;
+    
+    console.log(`💵 Precio de Chainlink en MXN: $${chainlinkPriceMXN.toFixed(2)}`);
+    return chainlinkPriceMXN;
   } catch (error) {
-    // Muestra un error si algo sale mal con la solicitud
-    console.error('Error al obtener los datos de la acción de Meta:', error.message);
+    console.error('❌ Error al obtener el precio de Chainlink:', error.message);
     throw error;
   }
 };
 
-module.exports = { getStockData };
+module.exports = { getChainlinkPrice };
