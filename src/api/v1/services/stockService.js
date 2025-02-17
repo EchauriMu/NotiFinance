@@ -18,7 +18,7 @@ const getChainlinkPrice = async () => {
     console.log(`💰 Precio de DOGE en USD: $${chainlinkPriceUSD}`);
 
     // Multiplicar por 20.57 en lugar de consultar la API de conversión
-    const conversionRate = 20.57;
+    const conversionRate = 20.61;
     const chainlinkPriceMXN = chainlinkPriceUSD * conversionRate;
     
     console.log(`💵 Precio de Chainlink en MXN: $${chainlinkPriceMXN.toFixed(2)}`);

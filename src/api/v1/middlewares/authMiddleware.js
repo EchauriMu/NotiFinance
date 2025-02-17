@@ -17,8 +17,8 @@ export const authenticateToken = (req, res, next) => {
       return res.status(403).json({ message: 'Token inválido o expirado' });
     }
 
-    req.user = user.username;  // Agregar el usuario al objeto de la solicitud
-    req.instituteId = user.instituteId._id; // Asegúrate de pasar el instituteId al request
+    req.userTk = user;  // Agregar el usuario al objeto de la solicitud
+    console.log(user);
  
     next();  // Continuar con la solicitud
   });
