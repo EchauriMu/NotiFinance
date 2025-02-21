@@ -7,6 +7,7 @@ export const getUserProfile = async (req, res) => {
 
     const result = await getUserInfo(userId);
 
+    
     if (!result.success) {
       return res.status(404).json({ success: false, message: result.message });
     }

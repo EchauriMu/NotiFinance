@@ -3,6 +3,10 @@ import jwt from 'jsonwebtoken';
 import { User } from '../models/userModel'; // Modelo de usuario
 import config from '../../../config/config'; // Configuración para JWT
 import { UserSettings } from '../models/notiModel'; 
+import { Alert } from '../models/alertModel';
+import { AlertHistory } from '../models/alertHistoryModel';
+
+
 // Función para generar un token JWT
 // Función para generar un token JWT
 const generateToken = (userData) => {
@@ -62,12 +66,12 @@ export const registerService = async (username, email, phone, password) => {
     const newUserSettings = new UserSettings({
       userId: newUser._id, // Asociamos el nuevo usuario
       notificationSettings: {
-        email: true, // Habilitar notificaciones por email por defecto
+        email: true,    // Habilitar notificaciones por email por defecto
         whatsapp: false, // Deshabilitar WhatsApp por defecto
-        discord: false, // Deshabilitar Discord por defecto
+        discord: false,  // Deshabilitar Discord por defecto
       },
-      watchlist: [], // Lista vacía por defecto
-      alerts: [], // No hay alertas configuradas por defecto
+      watchlist: [] // Lista vacía por defecto
+      // Las propiedades "alerts" y "alertHistory" se han eliminado ya que ahora son colecciones separadas.
     });
     // Guardar las configuraciones predeterminadas en la base de datos
     await newUserSettings.save();
@@ -89,7 +93,7 @@ export const registerService = async (username, email, phone, password) => {
 const formatPhoneNumber = (phone) => {
   if (!phone.startsWith('+')) {
     // Si no comienza con "+", asumimos que es un número nacional y le agregamos el código de país
-    return `+52${phone}`; // Reemplaza "+52" con el código de país para México
+    return `+52${phone}`; // Reemplaza "+52" con el código de país correspondiente si es necesario
   }
   return phone;
 };

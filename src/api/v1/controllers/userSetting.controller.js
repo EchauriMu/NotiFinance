@@ -3,12 +3,12 @@ import { getUserNotificationSettingsService } from '../services/userSetting.serv
 // Controller para obtener la configuración de notificaciones
 export const getUserNotificationSettings = async (req, res) => {
   try {
-    const userId = req.userTk.id; // Extraer userId del token
+    const userId = req.userTk.id; 
 
-    // Llamar al service para obtener la configuración
+    
     const userSettings = await getUserNotificationSettingsService(userId);
     
-    // Responder con éxito si se encuentra la configuración
+    
     return res.status(200).json(userSettings);
   } catch (error) {
     console.error('Error en getUserNotificationSettings:', error);

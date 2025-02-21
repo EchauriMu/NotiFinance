@@ -14,15 +14,14 @@ const app = express();
 
 app.set('port', config.PORT);
 
-app.use(cookieParser());  // Asegúrate de usar cookie-parser en el backend para leer las cookies
+app.use(cookieParser()); 
 
-app.set('trust proxy', 1); // Confía en el primer proxy
+app.set('trust proxy', 1); 
 
 // Configuración de CORS
 const corsOptions = {
-  origin: 'http://localhost:5174',  // Aquí colocamos el dominio de tu frontend
-  credentials: true,  // Permite enviar cookies, tokens o encabezados de autenticación
-};
+  origin: 'http://localhost:5173',  
+  credentials: true,  }
 
 // Aplicamos el middleware de CORS con las opciones configuradas
 app.use(cors(corsOptions));
