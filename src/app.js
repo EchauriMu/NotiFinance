@@ -20,7 +20,7 @@ app.set('trust proxy', 1);
 
 // Configuración de CORS
 const corsOptions = {
-  origin: 'https://notifinance-es.netlify.app',  
+  origin: 'http://localhost:5173',  
   credentials: true,  }
 
 // Aplicamos el middleware de CORS con las opciones configuradas
