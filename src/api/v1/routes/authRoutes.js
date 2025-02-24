@@ -1,11 +1,13 @@
 import { Router } from 'express';
-import { login, register } from '../controllers/auth.Controller'; // Importamos las funciones del controlador
+import { login, register,verifyEmailController } from '../controllers/auth.Controller'; // Importamos las funciones del controlador
 import { authenticateToken } from '../middlewares/authMiddleware';
 const router = Router();
 
 // Definimos las rutas para login y registro
 router.post('/login', login);  // Ruta para login
 router.post('/register', register);  // Ruta para registro
+router.post('/verify/:userId', verifyEmailController);  // Ruta para registro
+
 
 
 // Ruta protegida, requiere autenticación

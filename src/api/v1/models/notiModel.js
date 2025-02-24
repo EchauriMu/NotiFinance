@@ -8,9 +8,9 @@ const userSettingsSchema = new mongoose.Schema({
     unique: true
   },
   notificationSettings: {
-    email: { type: Boolean, default: false },
-    whatsapp: { type: Boolean, default: false },
-    discord: { type: Boolean, default: false }
+    email: { type: String, default: "" }, // Guarda el correo electrónico o una cadena vacía
+    whatsapp: { type: String, default: "" }, // Guarda el número de WhatsApp o una cadena vacía
+    discord: { type: String, default: "" } // Guarda el ID de Discord o una cadena vacía
   },
   watchlist: [{ 
     symbol: { type: String, required: true }

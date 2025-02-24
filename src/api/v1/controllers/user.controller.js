@@ -11,7 +11,7 @@ export const getUserProfile = async (req, res) => {
     if (!result.success) {
       return res.status(404).json({ success: false, message: result.message });
     }
-  console.log(result);
+
     res.status(200).json(result);
   } catch (error) {
     console.error('❌ [UserController] Error:', error.message);
