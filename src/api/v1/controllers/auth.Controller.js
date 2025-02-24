@@ -16,13 +16,14 @@ export const login = async (req, res) => {
       return res.status(result.status || 401).json({ message: result.error });
     }
 
-    // Configuramos la cookie de autenticación con opciones de seguridad
-    res.cookie("authToken", result.token, {
-      httpOnly: true, // No accesible desde JavaScript (protege contra XSS)
-      secure: process.env.NODE_ENV === "production", // Solo en HTTPS en producción
-      sameSite: "Lax", // Permite el envío de la cookie en solicitudes entre dominios
-      maxAge: 3600000, // La cookie expira en 1 hora (3600000 ms)
-    });
+  // Configuramos la cookie de autenticación con opciones de seguridad para producción
+res.cookie("authToken", result.token, {
+  httpOnly: true, // No accesible desde JavaScript (protege contra XSS)
+  secure: true, // Requiere HTTPS en producción
+  sameSite: "None", // Permite compartir cookies entre diferentes dominios
+  maxAge: 3600000, // Expira en 1 hora (3600000 ms)
+
+});
 
     return res.json({ message: "Inicio de sesión exitoso", token: result.token });
   } catch (error) {
