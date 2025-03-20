@@ -13,21 +13,29 @@ export const createAlert = async (data) => {
       console.error("❌ Configuración de notificaciones no encontrada para el usuario:", userId);
       throw new Error("Configuración de notificaciones no encontrada");
     }
-  const notificationData = userSettings.notificationSettings[typeNotification];
 
-    if (!notificationData) {
+    const notificationData = userSettings.notificationSettings[typeNotification];
+
+    // Validar si notificationData está vacío (solo si es una cadena vacía "")
+    if (notificationData === "") {
       console.error(`❌ No hay configuración disponible para "${typeNotification}"`);
-      throw new Error(`No hay configuración disponible para "${typeNotification}"`);
+      const error = new Error(`No hay configuración disponible para "${typeNotification}"`);
+      error.code = "NO_ALERT_SERVICE"; // Código de error personalizado
+      throw error;
     }
 
-   const alertData = { ...data, notificationData };
-
+    const alertData = { ...data, notificationData };
     const newAlert = await Alert.create(alertData);
-
 
     return newAlert;
   } catch (error) {
     console.error("🚨 ERROR al crear alerta:", error);
+
+    // Agregar el código de error si aún no existe (para que el frontend pueda identificarlo)
+    if (!error.code) {
+      error.code = "INTERNAL_ERROR";
+    }
+
     throw error;
   }
 };

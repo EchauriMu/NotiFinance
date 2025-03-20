@@ -22,7 +22,6 @@ export const getAlertById = async (req, res) => {
   }
 };
 
-// Crear una alerta (userId desde req.userTk.id)
 export const createAlert = async (req, res) => {
   try {
     const userId = req.userTk.id; // Obtener userId del token
@@ -31,9 +30,14 @@ export const createAlert = async (req, res) => {
     const newAlert = await alertService.createAlert(alertData);
     res.status(201).json(newAlert);
   } catch (error) {
+    if (error.code === "NO_ALERT_SERVICE") {
+      return res.status(403).json({ message: "El usuario no tiene el servicio de alertas activo", code: error.code });
+    }
     res.status(500).json({ message: "Error al crear alerta", error });
   }
 };
+
+
 
 // Actualizar una alerta
 export const updateAlert = async (req, res) => {
