@@ -65,7 +65,7 @@ const generateEmailVerificationToken = () => {
 
 // Función para enviar el correo de verificación usando la API sendStyle (HTML)
 const sendVerificationEmail = async (email, username, token, userId) => {
-  const verificationUrl = `https://notifinance-es.netlify.app/verify/${userId}`;
+  const verificationUrl = `http://localhost:5173/verify/${userId}`;
   // Endpoint para enviar emails estilizados (HTML)
   const emailSendURL = `https://ntemail.onrender.com/sendStyle/${encodeURIComponent(email)}`;
 
@@ -85,7 +85,14 @@ const sendVerificationEmail = async (email, username, token, userId) => {
   `;
 
   try {
-    const response = await axios.post(emailSendURL, { content: emailContent });
+    const headers = {
+      Authorization: `Bearer NotifinanceTK`,
+      "Content-Type": "application/json"
+    };
+    
+    const response = await axios.post(emailSendURL, { content: emailContent }, { headers });
+    
+
     console.log("✅ Email verification sent:", response.data);
     return true;
   } catch (err) {
@@ -224,14 +231,20 @@ export const verifyEmailService = async (userId, token) => {
           <p>Ahora puedes disfrutar de todas las funciones de nuestra plataforma.</p>
           <hr style="border: 1px solid #ddd;">
           <p style="color: #777;">Si no fuiste tú, por favor contáctanos inmediatamente.</p>
-          <p style="margin-top: 10px; font-size: 12px; color: #999;">© 2025 Mi Plataforma - Todos los derechos reservados.</p>
+          <p style="margin-top: 10px; font-size: 12px; color: #999;">© 2025 NotiFinance - Todos los derechos reservados.</p>
         </div>
       </div>
     `;
 
     // Enviar el correo con el HTML usando la ruta /sendStyle
     const emailSendUrl = `https://ntemail.onrender.com/sendStyle/${user.email}`;
-    await axios.post(emailSendUrl, { content: htmlContent });
+    const headers = {
+      Authorization: `Bearer NotifinanceTK`,
+      "Content-Type": "application/json"
+    };
+    
+    await axios.post(emailSendUrl, { content: htmlContent }, { headers });
+    
 
     return { message: "Correo de verificación enviado y usuario activado." };
   } catch (error) {
