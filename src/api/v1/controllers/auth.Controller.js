@@ -36,10 +36,10 @@ res.cookie("authToken", result.token, {
 // Lógica para el registro de usuario
 export const register = async (req, res) => {
   try {
-    const { username, password, email, phone } = req.body;
+    const { username, password, email} = req.body;
 
     // Llamamos al servicio de registro
-    const result = await registerService(username, email, phone, password);
+    const result = await registerService(username, email, password);
 
     if (result.error) {
       return res.status(400).json({ message: result.error });

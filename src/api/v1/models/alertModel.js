@@ -9,9 +9,8 @@ const alertSchema = new mongoose.Schema({
   },
   cryptoSymbol: { type: String, required: true },
   targetPrice: { type: Number, required: true },
-  condition: { type: Boolean, required: true }, // true = "por encima", false = "por debajo"
   isActive: { type: Boolean, default: true },
-  message: { type: String, default: '' },
+  isFulfilled: { type: Boolean, default: false }, // ✅ NUEVO campo
   typeNotification: {
     type: String,
     enum: ['discord', 'whatsapp', 'email'],

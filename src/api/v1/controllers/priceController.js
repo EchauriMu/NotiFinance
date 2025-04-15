@@ -10,11 +10,7 @@ const thresholdPrice = 5.0;
 // URL del webhook de Discord
 const discordWebhookUrl = 'https://discord.com/api/webhooks/1329620430688092273/q4iexUQCIZnlgKqJuRR7o7CB4nsbNWqIqdhA3J4XQj-tBBXeuPWd-BzRCRbRlVJirDwv';
 
-/**
- * Función que verifica el precio de Chainlink y envía notificación si:
- * - El precio supera el umbral.
- * - El precio es diferente al último notificado.
- */
+
 const checkAndNotifyPrice = async () => {
   try {
     console.log('==================== INICIANDO VERIFICACIÓN DE PRECIO ====================');

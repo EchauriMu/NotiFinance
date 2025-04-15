@@ -6,6 +6,7 @@ import config from '../../../config/config';  // Configuración para el URL base
 import { authenticateToken } from '../middlewares/authMiddleware'; // Importamos el middleware de autenticación
 import foroRoutes from './foro.routes'
 import AlertRoutes from './alerts.routes'
+import whatsRoutes from './whatsapp.routes'
 
 const routerAPI = (app) => {
   const router = Router();
@@ -20,6 +21,8 @@ const routerAPI = (app) => {
 
   router.use('/foro', authenticateToken, foroRoutes); 
   router.use('/alert', authenticateToken, AlertRoutes);
+
+  router.use('/whatsapp', authenticateToken, whatsRoutes);
 
   return router;
 };

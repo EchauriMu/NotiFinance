@@ -102,10 +102,10 @@ const sendVerificationEmail = async (email, username, token, userId) => {
 };
 
 // Servicio de registro
-export const registerService = async (username, email, phone, password) => {
+export const registerService = async (username, email, password) => {
   try {
     // Verificar si el usuario ya existe (por username, email o teléfono)
-    const existingUser = await User.findOne({ $or: [{ username }, { email }, { phone }] });
+    const existingUser = await User.findOne({ $or: [{ username }, { email }] });
 
     if (existingUser) {
       if (existingUser.isActive) {
@@ -145,12 +145,10 @@ export const registerService = async (username, email, phone, password) => {
     const emailVerificationToken = generateEmailVerificationToken();
     const emailVerificationExpires = new Date(Date.now() + 15 * 60 * 1000);
 
-    // Formatear el número de teléfono
-    const formattedPhone = formatPhoneNumber(phone);
+
     const newUser = new User({
       username,
       email,
-      phone: formattedPhone,
       password,
       emailVerificationToken,
       emailVerificationExpires,

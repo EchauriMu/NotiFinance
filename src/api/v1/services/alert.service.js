@@ -46,9 +46,19 @@ export const getAllAlerts = async () => {
   return await Alert.find();
 };
 
-// Obtener una alerta por ID
-export const getAlertById = async (id) => {
-  return await Alert.findById(id);
+// Obtener todas las alertas de un usuario por su ID
+export const getAlertById = async (userId) => {
+  if (!userId) {
+    throw new Error('Falta el ID del usuario.');
+  }
+
+  try {
+    const alerts = await Alert.find({ userId }).sort({ createdAt: -1 });
+    return alerts;
+  } catch (err) {
+    console.error('Error en getAlertsByUserId:', err);
+    throw new Error('No se pudieron obtener las alertas del usuario.');
+  }
 };
 
 // Actualizar una alerta

@@ -10,15 +10,24 @@ export const getAllAlerts = async (req, res) => {
   }
 };
 
-// Obtener una alerta por ID
 export const getAlertById = async (req, res) => {
   try {
-    const alert = await alertService.getAlertById(req.params.id);
-    if (!alert) return res.status(404).json({ message: "Alerta no encontrada" });
+    const userId = req.userTk?.id;
 
-    res.status(200).json(alert);
+    if (!userId) {
+      return res.status(401).json({ message: "Token inválido o usuario no autenticado." });
+    }
+
+    const alerts = await alertService.getAlertById(userId);
+
+    if (!alerts || alerts.length === 0) {
+      return res.status(404).json({ message: "No se encontraron alertas para este usuario." });
+    }
+
+    res.status(200).json(alerts);
   } catch (error) {
-    res.status(500).json({ message: "Error al obtener alerta", error });
+    console.error("Error al obtener alertas:", error);
+    res.status(500).json({ message: "Error interno al obtener alertas", error: error.message });
   }
 };
 
