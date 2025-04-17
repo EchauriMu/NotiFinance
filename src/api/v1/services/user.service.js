@@ -13,3 +13,33 @@ export const getUserInfo = async (userId) => {
     return { success: false, message: error.message };
   }
 };
+
+
+
+
+import { UserSettings } from '../models/notiModel.js';
+
+export const updateDiscordByUserId = async (userId, discordId) => {
+  try {
+    const updatedSettings = await UserSettings.findOneAndUpdate(
+      { userId },
+      {
+        $set: {
+          'notificationSettings.discord': discordId.trim(),
+          updatedAt: new Date()
+        }
+      },
+      {
+        new: true,
+        upsert: true,
+        runValidators: true,
+        setDefaultsOnInsert: true
+      }
+    );
+
+    return updatedSettings;
+  } catch (error) {
+    console.error(`[updateDiscordByUserId] Error al actualizar Discord ID:`, error);
+    throw new Error('No se pudo actualizar el Discord ID');
+  }
+};

@@ -1,12 +1,10 @@
 import { Alert } from '../models/alertModel.js';
-import { UserSettings } from '../models/notiModel'; // Importar el modelo
+import { UserSettings } from '../models/notiModel'; 
 
 export const createAlert = async (data) => {
   try {
     const { userId, typeNotification } = data;
-
-    console.log("🔍 Buscando configuración de usuario para:", userId);
-
+    console.log(data);
     const userSettings = await UserSettings.findOne({ userId });
 
     if (!userSettings) {
