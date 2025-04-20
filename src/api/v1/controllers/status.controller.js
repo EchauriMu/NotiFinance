@@ -4,14 +4,14 @@ import * as serviceStatus from '../services/status.service.js';
 export const getServicesStatus = async (req, res) => {
   try {
     // Llamamos al servicio para obtener el estado de cada uno
-    const notificacionesStatus = await serviceStatus.checkServiceStatus('notificaciones');
-    const notifinanceStatus = await serviceStatus.checkServiceStatus('notifinance');
+    const servicioWhatsappAlertasStatus = await serviceStatus.checkServiceStatus('servicio de whatsapp y alertas');
+    const servicioCorreoStatus = await serviceStatus.checkServiceStatus('servicio de correo');
     const apiPreciosStatus = await serviceStatus.checkServiceStatus('api_precios');
 
     // Enviar los estados de los servicios como un objeto
     const result = {
-      notificaciones: notificacionesStatus,
-      notifinance: notifinanceStatus,
+      'servicio de whatsapp y alertas': servicioWhatsappAlertasStatus,
+      'servicio de correo': servicioCorreoStatus,
       api_precios: apiPreciosStatus
     };
 

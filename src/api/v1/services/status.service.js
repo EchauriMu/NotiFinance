@@ -3,8 +3,8 @@ import { exec } from 'child_process';
 
 // URLs y IPs de los servicios
 const SERVICIOS = {
-  notificaciones: '172.178.51.229', // IP de la VM
-  notifinance: 'https://ntemail.onrender.com/status',
+  'servicio de whatsapp y alertas': '172.178.51.229', // IP de la VM (servicio de whatsapp y alertas)
+  'servicio de correo': 'https://ntemail.onrender.com/status',
   api_precios: 'https://api-twelve.onrender.com/'
 };
 
@@ -37,10 +37,10 @@ export const checkStatus = async (url) => {
 
 // Función para comprobar el estado de un servicio (uno por uno)
 export const checkServiceStatus = async (serviceName) => {
-  if (serviceName === 'notificaciones') {
-    return await pingHost(SERVICIOS.notificaciones); // Retorna el estado de "notificaciones" usando ping
-  } else if (serviceName === 'notifinance') {
-    return await checkStatus(SERVICIOS.notifinance); // Retorna el estado de "notifinance" usando HTTP
+  if (serviceName === 'servicio de whatsapp y alertas') {
+    return await pingHost(SERVICIOS['servicio de whatsapp y alertas']); // Retorna el estado de "servicio de whatsapp y alertas" usando ping
+  } else if (serviceName === 'servicio de correo') {
+    return await checkStatus(SERVICIOS['servicio de correo']); // Retorna el estado de "servicio de correo" usando HTTP
   } else if (serviceName === 'api_precios') {
     return await checkStatus(SERVICIOS.api_precios); // Retorna el estado de "api_precios" usando HTTP
   } else {
