@@ -5,20 +5,20 @@ import config from '../../../config/config'; // Configuración para JWT
 import { UserSettings } from '../models/notiModel'; 
 import { Alert } from '../models/alertModel';
 import { AlertHistory } from '../models/alertHistoryModel';
+import { Subscription } from '../models/subsModel';
 import axios from 'axios';
 
 
 // Función para generar un token JWT
-// Función para generar un token JWT
-const generateToken = (userData) => {
+const generateToken = (userData, plan) => {
   const payload = {
     id: userData._id,
     username: userData.username,
     role: userData.role,
+    plan: plan // Añadimos el plan de suscripción al token
   };
   return jwt.sign(payload, config.JWT_SECRET, { expiresIn: '1h' }); // Token válido por 1 hora
 };
-
 
 export const loginService = async (username, password) => {
   try {
@@ -40,14 +40,22 @@ export const loginService = async (username, password) => {
       return { error: "Contraseña incorrecta", status: 401 };
     }
 
-    const token = generateToken(user);
+    // Obtener la suscripción activa del usuario
+    const subscription = await Subscription.findOne({ 
+      user: user._id, 
+      status: 'active' 
+    });
+
+    // Si no tiene suscripción activa, usar 'Freemium' como valor predeterminado
+    const userPlan = subscription ? subscription.plan : 'Freemium';
+    
+    const token = generateToken(user, userPlan);
     return { token, status: 200 }; // ⬅️ Devolver éxito con código 200
   } catch (error) {
     console.error("❌ Error en loginService:", error.message);
     throw new Error("Error interno del servidor");
   }
 };
-
 
 
 // Función para formatear el número de teléfono a formato internacional (México)
@@ -101,32 +109,27 @@ const sendVerificationEmail = async (email, username, token, userId) => {
   }
 };
 
-// Servicio de registro
+
 export const registerService = async (username, email, password) => {
   try {
     // Verificar si el usuario ya existe (por username, email o teléfono)
     const existingUser = await User.findOne({ $or: [{ username }, { email }] });
-
     if (existingUser) {
       if (existingUser.isActive) {
         return { error: "Este usuario ya está registrado y activado." };
       }
-
       // Si el token aún es válido (no expiró), no permitir reenviar
       if (existingUser.emailVerificationExpires > Date.now()) {
         return {
           error: "Ya se ha enviado un correo de verificación. Espera a que expire o verifica tu cuenta.",
         };
       }
-
       // Si el token ha expirado, generar uno nuevo y actualizar
       const newEmailVerificationToken = generateEmailVerificationToken();
       const newEmailVerificationExpires = new Date(Date.now() + 15 * 60 * 1000);
-
       existingUser.emailVerificationToken = newEmailVerificationToken;
       existingUser.emailVerificationExpires = newEmailVerificationExpires;
       await existingUser.save();
-
       // Reenviar el correo con el nuevo token (usando sendStyle para HTML)
       const emailSent = await sendVerificationEmail(
         email,
@@ -137,15 +140,11 @@ export const registerService = async (username, email, password) => {
       if (!emailSent) {
         return { error: "No se pudo reenviar el correo de verificación. Intenta nuevamente." };
       }
-
       return { message: "Tu token de verificación ha expirado. Se ha enviado uno nuevo a tu correo." };
     }
-
     // Si el usuario no existe, proceder con el registro normal
     const emailVerificationToken = generateEmailVerificationToken();
     const emailVerificationExpires = new Date(Date.now() + 15 * 60 * 1000);
-
-
     const newUser = new User({
       username,
       email,
@@ -154,8 +153,7 @@ export const registerService = async (username, email, password) => {
       emailVerificationExpires,
     });
     await newUser.save();
-
-
+    
     const newUserSettings = new UserSettings({
       userId: newUser._id,
       notificationSettings: {
@@ -166,7 +164,23 @@ export const registerService = async (username, email, password) => {
       watchlist: [],
     });
     await newUserSettings.save();
-
+    
+    // Crear suscripción Freemium por defecto
+    // Calcular fecha de expiración (1 año por defecto para plan Freemium)
+    const expiresAt = new Date();
+    expiresAt.setFullYear(expiresAt.getFullYear() + 1);
+    
+    const newSubscription = new Subscription({
+      user: newUser._id,
+      plan: 'Freemium',
+      price: "$0.00/mes",
+      status: 'active',
+      expiresAt: expiresAt,
+      paymentMethod: 'none',
+      nextBillingDate: expiresAt
+    });
+    await newSubscription.save();
+    
     // Enviar correo de verificación (usando sendStyle para HTML)
     const emailSent = await sendVerificationEmail(
       email,
@@ -177,7 +191,6 @@ export const registerService = async (username, email, password) => {
     if (!emailSent) {
       return { error: "No se pudo enviar el correo de verificación. Intenta nuevamente." };
     }
-
     return {
       message: "Usuario registrado exitosamente. Se ha enviado un token de verificación a tu correo.",
     };
@@ -186,7 +199,6 @@ export const registerService = async (username, email, password) => {
     throw new Error("Error interno del servidor");
   }
 };
-
 
 
 

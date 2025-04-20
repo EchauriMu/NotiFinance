@@ -7,6 +7,8 @@ import { authenticateToken } from '../middlewares/authMiddleware'; // Importamos
 import foroRoutes from './foro.routes'
 import AlertRoutes from './alerts.routes'
 import whatsRoutes from './whatsapp.routes'
+import subsRoutes from './subs.routes'
+import { getServicesStatus } from '../controllers/status.controller';
 
 const routerAPI = (app) => {
   const router = Router();
@@ -23,6 +25,9 @@ const routerAPI = (app) => {
   router.use('/alert', authenticateToken, AlertRoutes);
 
   router.use('/whatsapp', authenticateToken, whatsRoutes);
+
+  router.use('/subs', authenticateToken, subsRoutes);
+  router.use('/status', authenticateToken, getServicesStatus);
 
   return router;
 };
