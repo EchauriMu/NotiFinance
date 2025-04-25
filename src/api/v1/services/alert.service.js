@@ -1,63 +1,121 @@
 import { Alert } from '../models/alertModel.js';
 import { UserSettings } from '../models/notiModel'; 
+import { Subscription } from '../models/subsModel.js';
 
 export const createAlert = async (data) => {
   try {
     const { userId, typeNotification } = data;
-    console.log(data);
+
+    // Obtener la configuración de notificaciones del usuario
     const userSettings = await UserSettings.findOne({ userId });
-
     if (!userSettings) {
-      console.error("❌ Configuración de notificaciones no encontrada para el usuario:", userId);
-      throw new Error("Configuración de notificaciones no encontrada");
-    }
-
-    const notificationData = userSettings.notificationSettings[typeNotification];
-
-    // Validar si notificationData está vacío (solo si es una cadena vacía "")
-    if (notificationData === "") {
-      console.error(`❌ No hay configuración disponible para "${typeNotification}"`);
-      const error = new Error(`No hay configuración disponible para "${typeNotification}"`);
-      error.code = "NO_ALERT_SERVICE"; // Código de error personalizado
+      const error = new Error();
+      error.code = "NO_USER_SETTINGS";  // Enviar solo el código de error
       throw error;
     }
 
+    const notificationData = userSettings.notificationSettings[typeNotification];
+    if (notificationData === "") {
+      const error = new Error();
+      error.code = "NO_ALERT_SERVICE";  // Enviar solo el código de error
+      throw error;
+    }
+
+    // Obtener la suscripción activa del usuario
+    const subscription = await Subscription.findOne({ user: userId, status: 'active' });
+    if (!subscription) {
+      const error = new Error();
+      error.code = "NO_ACTIVE_SUBSCRIPTION";  // Enviar solo el código de error
+      throw error;
+    }
+
+    // Determinar el límite de alertas según el plan
+    let alertLimit;
+    switch (subscription.plan) {
+      case 'Freemium':
+        alertLimit = 3;
+        break;
+      case 'Premium':
+        alertLimit = 10;
+        break;
+      case 'NotiFinance Pro':
+        alertLimit = 20;
+        break;
+      default:
+        const error = new Error();
+        error.code = "UNKNOWN_PLAN";  // Enviar solo el código de error
+        throw error;
+    }
+
+    // Verificar cuántas alertas tiene el usuario en total
+    const totalAlerts = await Alert.countDocuments({ userId });
+    if (totalAlerts >= alertLimit) {
+      const error = new Error();
+      error.code = "LIMIT_ERROR";  // Enviar solo el código de error
+      throw error;
+    }
+
+    // Crear la nueva alerta (inactiva o activa según se reciba)
     const alertData = { ...data, notificationData };
     const newAlert = await Alert.create(alertData);
 
     return newAlert;
+
   } catch (error) {
     console.error("🚨 ERROR al crear alerta:", error);
 
-    // Agregar el código de error si aún no existe (para que el frontend pueda identificarlo)
+ 
     if (!error.code) {
-      error.code = "INTERNAL_ERROR";
+      error.code = "INTERNAL_ERROR";  // Código genérico para errores internos
     }
 
-    throw error;
+    throw error;  // Lanzar solo el error con el código
   }
 };
+
 
 
 // Obtener todas las alertas
 export const getAllAlerts = async () => {
   return await Alert.find();
 };
-
 // Obtener todas las alertas de un usuario por su ID
 export const getAlertById = async (userId) => {
   if (!userId) {
-    throw new Error('Falta el ID del usuario.');
+    const error = new Error('Falta el ID del usuario.');
+    error.code = 'MISSING_USER_ID';
+    throw error;
   }
 
   try {
     const alerts = await Alert.find({ userId }).sort({ createdAt: -1 });
-    return alerts;
+
+    if (!alerts || alerts.length === 0) {
+      const error = new Error('No se encontraron alertas para el usuario.');
+      error.code = 'NONE_ALERTS';
+      throw error;
+    }
+
+    const totalAlerts = alerts.length;
+
+    // Añadir el total a cada alerta
+    const alertsWithCount = alerts.map(alert => ({
+      ...alert.toObject(),
+      totalAlerts
+    }));
+
+    return alertsWithCount;
   } catch (err) {
-    console.error('Error en getAlertsByUserId:', err);
-    throw new Error('No se pudieron obtener las alertas del usuario.');
+    // Si ya tiene un código (como NONE_ALERTS), lo dejamos pasar tal cual
+    if (err.code) throw err;
+
+    // Otro tipo de error general
+    const error = new Error('No se pudieron obtener las alertas del usuario.');
+    error.code = 'GET_ALERTS_ERROR';
+    throw error;
   }
 };
+
 
 // Actualizar una alerta
 export const updateAlert = async (id, data) => {

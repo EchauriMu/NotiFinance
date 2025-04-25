@@ -15,7 +15,6 @@ export const getServicesStatus = async (req, res) => {
       api_precios: apiPreciosStatus
     };
 
-    console.log(result);
 
     // Devolver los estados de los servicios como respuesta en formato JSON
     res.json(result);

@@ -4,6 +4,7 @@ import * as alertService from '../services/alert.service.js';
 export const getAllAlerts = async (req, res) => {
   try {
     const alerts = await alertService.getAllAlerts();
+   
     res.status(200).json(alerts);
   } catch (error) {
     res.status(500).json({ message: "Error al obtener alertas", error });
@@ -15,21 +16,40 @@ export const getAlertById = async (req, res) => {
     const userId = req.userTk?.id;
 
     if (!userId) {
-      return res.status(401).json({ message: "Token inválido o usuario no autenticado." });
+      return res.status(401).json({
+        message: "Token inválido o usuario no autenticado.",
+        code: "MISSING_USER_ID"
+      });
     }
 
     const alerts = await alertService.getAlertById(userId);
 
-    if (!alerts || alerts.length === 0) {
-      return res.status(404).json({ message: "No se encontraron alertas para este usuario." });
-    }
-
     res.status(200).json(alerts);
   } catch (error) {
     console.error("Error al obtener alertas:", error);
-    res.status(500).json({ message: "Error interno al obtener alertas", error: error.message });
+
+    if (error.code === "MISSING_USER_ID") {
+      return res.status(401).json({
+        message: "Token inválido o usuario no autenticado.",
+        code: error.code
+      });
+    }
+
+    if (error.code === "NONE_ALERTS") {
+      return res.status(404).json({
+        message: "No se encontraron alertas para el usuario.",
+        code: error.code
+      });
+    }
+
+    res.status(500).json({
+      message: "Error interno al obtener alertas.",
+      code: "GET_ALERTS_ERROR",
+      error: error.message
+    });
   }
 };
+
 
 export const createAlert = async (req, res) => {
   try {
@@ -40,11 +60,26 @@ export const createAlert = async (req, res) => {
     res.status(201).json(newAlert);
   } catch (error) {
     if (error.code === "NO_ALERT_SERVICE") {
-      return res.status(403).json({ message: "El usuario no tiene el servicio de alertas activo", code: error.code });
+      return res.status(403).json({
+        message: "El usuario no tiene el servicio de alertas activo",
+        code: error.code,
+      });
     }
-    res.status(500).json({ message: "Error al crear alerta", error });
+
+    if (error.code === "LIMIT_ERROR") {
+      return res.status(429).json({
+        message: "Has alcanzado el límite de alertas permitido para tu plan",
+        code: error.code,
+      });
+    }
+
+    res.status(500).json({
+      message: "Error al crear alerta",
+      error,
+    });
   }
 };
+
 
 
 

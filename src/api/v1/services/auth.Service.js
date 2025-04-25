@@ -15,7 +15,6 @@ const generateToken = (userData, plan) => {
     id: userData._id,
     username: userData.username,
     role: userData.role,
-    plan: plan // Añadimos el plan de suscripción al token
   };
   return jwt.sign(payload, config.JWT_SECRET, { expiresIn: '1h' }); // Token válido por 1 hora
 };
@@ -26,7 +25,7 @@ export const loginService = async (username, password) => {
 
     if (!user) {
       console.log("❌ Usuario no encontrado");
-      return { error: "Usuario no encontrado", status: 401 }; // ⬅️ Devolver código 401
+      return { error: "Usuario no encontrado", status: 401 };
     }
 
     if (!user.isActive) {
@@ -40,17 +39,8 @@ export const loginService = async (username, password) => {
       return { error: "Contraseña incorrecta", status: 401 };
     }
 
-    // Obtener la suscripción activa del usuario
-    const subscription = await Subscription.findOne({ 
-      user: user._id, 
-      status: 'active' 
-    });
-
-    // Si no tiene suscripción activa, usar 'Freemium' como valor predeterminado
-    const userPlan = subscription ? subscription.plan : 'Freemium';
-    
-    const token = generateToken(user, userPlan);
-    return { token, status: 200 }; // ⬅️ Devolver éxito con código 200
+    const token = generateToken(user); // ← Eliminado el segundo parámetro (userPlan)
+    return { token, status: 200 };
   } catch (error) {
     console.error("❌ Error en loginService:", error.message);
     throw new Error("Error interno del servidor");
