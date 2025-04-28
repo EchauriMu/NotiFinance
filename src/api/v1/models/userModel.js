@@ -1,6 +1,13 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 
+// Función para generar un número aleatorio de 4 dígitos seguido de una letra aleatoria
+const generateRandomPhone = () => {
+  const randomNumber = Math.floor(Math.random() * 9000) + 1000;  // Número aleatorio entre 1000 y 9999
+  const randomLetter = String.fromCharCode(Math.floor(Math.random() * 26) + 65);  // Letra aleatoria (A-Z)
+  return randomNumber + randomLetter;  // Número + Letra
+};
+
 const userSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
   email: { type: String, required: true, unique: true, lowercase: true },
@@ -11,18 +18,22 @@ const userSchema = new mongoose.Schema({
     default: 'basic', 
     required: true 
   },
-  phone: { type: String, required: false, unique: true, sparse: true },
+  // Número de teléfono único generado aleatoriamente
+  phone: { 
+    type: String, 
+    unique: true, 
+    default: generateRandomPhone  // Número aleatorio con letra
+  },
   phoneVerificationToken: { type: String, default: null },
   phoneVerificationExpires: { type: Date, default: null },
   emailVerificationToken: { type: String, default: null },
-emailVerificationExpires: { type: Date, default: null },
-  isPoneVerified: { type: Boolean, default: false },
+  emailVerificationExpires: { type: Date, default: null },
+  isPhoneVerified: { type: Boolean, default: false },
   isActive: { type: Boolean, default: false },
   lastLogin: { type: Date, default: null },
   failedLoginAttempts: { type: Number, default: 0 },
   resetPasswordToken: { type: String, default: null },
   resetPasswordExpires: { type: Date, default: null },
-
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 });
