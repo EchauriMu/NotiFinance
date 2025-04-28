@@ -48,7 +48,7 @@ export const verifyPhoneCodeService = async (userId, code) => {
   await user.save();
 
   // 🛠️ Actualizar o crear UserSettings con el número de WhatsApp formateado
-  const whatsappUrl = `http://localhost:3005/alert/+521${user.phone}`;
+  const whatsappUrl = `http://20.121.66.167:80/alert/+521${user.phone}`;
 
   const updatedSettings = await UserSettings.findOneAndUpdate(
     { userId },
