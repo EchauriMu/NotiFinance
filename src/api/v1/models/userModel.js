@@ -11,7 +11,7 @@ const userSchema = new mongoose.Schema({
     default: 'basic', 
     required: true 
   },
-  phone: { type: String, required: false, unique: true },
+  phone: { type: String, required: false, unique: true, sparse: true },
   phoneVerificationToken: { type: String, default: null },
   phoneVerificationExpires: { type: Date, default: null },
   emailVerificationToken: { type: String, default: null },
