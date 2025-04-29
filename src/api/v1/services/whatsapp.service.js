@@ -8,7 +8,7 @@ export const sendWhatsAppMessage = async (phoneNumber, message) => {
   try {
     console.log(`Enviando mensaje a: ${phoneNumber}`);
     
-    const url = `http://localhost:3005/alert/${phoneNumber}`;
+    const url = `http://20.121.66.167:80/alert/${phoneNumber}`;
     const response = await axios.post(url, { content: message });
     
     console.log('Respuesta del servicio WhatsApp:', response.data);

@@ -31,7 +31,7 @@ const subscriptionSchema = new mongoose.Schema({
   },
   paymentMethod: {
     type: String,
-    enum: ['creditCard', 'paypal', 'bankTransfer'],
+    enum: ['creditCard', 'paypal', 'bankTransfer', 'none'],
     default: 'creditCard'
   },
   lastPaymentDate: {

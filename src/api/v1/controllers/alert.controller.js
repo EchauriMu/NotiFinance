@@ -83,15 +83,46 @@ export const createAlert = async (req, res) => {
 
 
 
-// Actualizar una alerta
-export const updateAlert = async (req, res) => {
+export const changeIsActiveStatus = async (req, res) => {
   try {
-    const updatedAlert = await alertService.updateAlert(req.params.id, req.body);
-    if (!updatedAlert) return res.status(404).json({ message: "Alerta no encontrada" });
+    const { id, isActive } = req.body;
 
-    res.status(200).json(updatedAlert);
+    // Validación de parámetros
+    if (!id) {
+      return res.status(400).json({ code: 'MISSING_ID', message: 'El campo id es requerido' });
+    }
+
+    if (typeof isActive !== 'boolean') {
+      return res.status(400).json({ code: 'INVALID_IS_ACTIVE', message: 'El campo isActive debe ser booleano' });
+    }
+
+    // Actualización de la alerta
+    const updatedAlert = await alertService.updateAlertIsActive(id, isActive);
+
+    if (!updatedAlert) {
+      return res.status(404).json({ code: 'ALERT_NOT_FOUND', message: 'Alerta no encontrada' });
+    }
+
+    res.json({
+      message: 'Estado actualizado correctamente',
+      alert: updatedAlert
+    });
+
   } catch (error) {
-    res.status(500).json({ message: "Error al actualizar alerta", error });
+    // Manejo de errores internos
+    console.error('Error en el controlador:', error);
+
+    if (error.code === 'LIMIT_ERROR') {
+      return res.status(400).json({
+        code: 'LIMIT_ERROR',
+        message: 'Ya alcanzaste el límite de alertas activas permitido en tu plan.'
+      });
+    }
+    // Error genérico para otros casos
+    res.status(500).json({
+      code: 'INTERNAL_ERROR',
+      message: 'Ha ocurrido un error interno. Intenta nuevamente más tarde.'
+    });
   }
 };
 

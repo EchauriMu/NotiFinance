@@ -104,6 +104,8 @@ export const getAlertById = async (userId) => {
       totalAlerts
     }));
 
+
+
     return alertsWithCount;
   } catch (err) {
     // Si ya tiene un código (como NONE_ALERTS), lo dejamos pasar tal cual
@@ -118,9 +120,72 @@ export const getAlertById = async (userId) => {
 
 
 // Actualizar una alerta
-export const updateAlert = async (id, data) => {
-  return await Alert.findByIdAndUpdate(id, data, { new: true });
+export const updateAlertIsActive = async (alertId, isActive) => {
+  try {
+    const alert = await Alert.findById(alertId);
+    if (!alert) {
+      const error = new Error();
+      error.code = "ALERT_NOT_FOUND";
+      throw error;
+    }
+
+    const { userId } = alert;
+
+   
+
+    // Validar suscripción activa
+    const subscription = await Subscription.findOne({ user: userId, status: 'active' });
+    if (!subscription) {
+      const error = new Error();
+      error.code = "NO_ACTIVE_SUBSCRIPTION";
+      throw error;
+    }
+
+    // Definir límite de alertas activas según plan
+    let alertLimit;
+    switch (subscription.plan) {
+      case 'Freemium':
+        alertLimit = 1;
+        break;
+      case 'Premium':
+        alertLimit = 5;
+        break;
+      case 'NotiFinance Pro':
+        alertLimit = 10;
+        break;
+      default:
+        const error = new Error();
+        error.code = "UNKNOWN_PLAN";
+        throw error;
+    }
+
+    // Si se está activando, validar el límite de alertas activas
+    if (isActive) {
+      const activeAlertsCount = await Alert.countDocuments({ userId, isActive: true });
+      if (activeAlertsCount >= alertLimit) {
+        const error = new Error();
+        error.code = "LIMIT_ERROR";
+        throw error;
+      }
+    }
+
+    // Actualizar estado de la alerta
+    alert.isActive = isActive;
+    await alert.save();
+    return alert;
+
+  } catch (error) {
+    console.error("🚨 ERROR al actualizar alerta:", error);
+
+    if (!error.code) {
+      error.code = "INTERNAL_ERROR";
+    }
+
+    throw error;
+  }
 };
+
+
 
 // Eliminar una alerta
 export const deleteAlert = async (id) => {

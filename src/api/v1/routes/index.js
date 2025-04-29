@@ -9,6 +9,8 @@ import AlertRoutes from './alerts.routes'
 import whatsRoutes from './whatsapp.routes'
 import subsRoutes from './subs.routes'
 import { getServicesStatus } from '../controllers/status.controller';
+import reserRoutes from './recovery.routes'
+import configRoutes from './config.routes'
 
 const routerAPI = (app) => {
   const router = Router();
@@ -18,6 +20,8 @@ const routerAPI = (app) => {
   app.use(api, router);
 
   router.use('/auth', authRoutes);  // Ruta base es /api/v1/auth/login, /api/v1/auth/register
+  router.use('/reset',  reserRoutes);
+
   router.use('/setting', authenticateToken, userSettingsRoutes); 
   router.use('/user', authenticateToken, user); 
 
@@ -28,6 +32,8 @@ const routerAPI = (app) => {
 
   router.use('/subs', authenticateToken, subsRoutes);
   router.use('/status', authenticateToken, getServicesStatus);
+
+  router.use('/config', authenticateToken, configRoutes);
 
   return router;
 };
