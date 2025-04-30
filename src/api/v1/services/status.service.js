@@ -5,7 +5,7 @@ import { exec } from 'child_process';
 const SERVICIOS = {
   'servicio de whatsapp y alertas': '172.178.51.229', // IP de la VM (servicio de whatsapp y alertas)
   'servicio de correo': 'https://ntemail.onrender.com/status',
-  api_precios: 'https://api-twelve.onrender.com/'
+  api_precios: 'https://api-twelve-613d.onrender.com/status'
 };
 
 // Función para hacer ping a la IP de la VM

@@ -106,7 +106,7 @@ export const registerService = async (username, email, password) => {
     const existingUser = await User.findOne({ $or: [{ username }, { email }] });
     if (existingUser) {
       if (existingUser.isActive) {
-        return { error: "Este usuario ya está registrado y activado." };
+        return { error: "Este nombre usuario ya está registrado y activado." };
       }
       // Si el token aún es válido (no expiró), no permitir reenviar
       if (existingUser.emailVerificationExpires > Date.now()) {
