@@ -45,7 +45,7 @@ const api = config.API_URL;
 
 app.get(`${api}`, (req,res)=>{
   res.send(
-      `<h1>RESTful running in root</h1> <p> KinderGarden: <b>${api}/api-docs</b> for more information.</p>`
+      `<h1>RESTful running in root</h1> <p> NT: <b>${api}/api-docs</b> for more information.</p>`
   );
 })
 

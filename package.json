@@ -34,7 +34,8 @@
     "nodemailer": "^6.9.16",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
-    "twilio": "^5.4.2"
+    "twilio": "^5.4.2",
+    "ws": "^8.18.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.25.7",
