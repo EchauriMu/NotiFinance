@@ -4,6 +4,7 @@ import {Foro} from "../models/foroModel.js";
 
 class ForoService {
   static async createForo(data) {
+    console.log(data);
     const foro = new Foro(data);
     return await foro.save();
   }

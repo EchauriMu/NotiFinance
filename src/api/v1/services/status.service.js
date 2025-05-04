@@ -1,24 +1,10 @@
 import axios from 'axios';
-import { exec } from 'child_process';
 
 // URLs y IPs de los servicios
 const SERVICIOS = {
-  'servicio de whatsapp y alertas': '172.178.51.229', // IP de la VM (servicio de whatsapp y alertas)
+  'servicio de whatsapp y alertas': 'http://20.121.66.167', // Usamos HTTP para verificar la IP pública de Nginx
   'servicio de correo': 'https://ntemail.onrender.com/status',
   api_precios: 'https://api-twelve-613d.onrender.com/status'
-};
-
-// Función para hacer ping a la IP de la VM
-export const pingHost = (host) => {
-  return new Promise((resolve, reject) => {
-    exec(`ping -c 1 ${host}`, (err, stdout, stderr) => {
-      if (err) {
-        resolve('Caído'); // Si no se puede hacer ping, lo devuelve como "Caído"
-        return;
-      }
-      resolve('Operativo'); // Si el ping responde, se devuelve como "Operativo"
-    });
-  });
 };
 
 // Función para verificar el estado de un servicio web usando axios
@@ -38,7 +24,8 @@ export const checkStatus = async (url) => {
 // Función para comprobar el estado de un servicio (uno por uno)
 export const checkServiceStatus = async (serviceName) => {
   if (serviceName === 'servicio de whatsapp y alertas') {
-    return await pingHost(SERVICIOS['servicio de whatsapp y alertas']); // Retorna el estado de "servicio de whatsapp y alertas" usando ping
+    // Verificamos el estado de "servicio de whatsapp y alertas" a través de Nginx (HTTP)
+    return await checkStatus(SERVICIOS['servicio de whatsapp y alertas']);
   } else if (serviceName === 'servicio de correo') {
     return await checkStatus(SERVICIOS['servicio de correo']); // Retorna el estado de "servicio de correo" usando HTTP
   } else if (serviceName === 'api_precios') {

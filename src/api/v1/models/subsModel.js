@@ -11,7 +11,6 @@ const subscriptionSchema = new mongoose.Schema({
     enum: ['Freemium', 'Premium', 'NotiFinance Pro'],
     required: true
   },
-  price: { type: String, required: true }, // Ej: "$9.99/mes"
   status: {
     type: String,
     enum: ['active', 'expired', 'canceled', 'trial'],
