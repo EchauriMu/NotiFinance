@@ -20,7 +20,7 @@ app.set('trust proxy', 1);
 
 //el mugre cors >:v
 const corsOptions = {
-  origin: ['http://localhost:5173', 'https://notifinance-es.netlify.app'],
+  origin: ['http://localhost:5173', 'https://notifinance-es.netlify.app', 'http://localhost:5175'],
   credentials: true,
 };
 // Aplicamos el middleware de CORS con las opciones configuradas
