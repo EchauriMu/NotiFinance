@@ -26,7 +26,7 @@ const subscriptionSchema = new mongoose.Schema({
   },
   autoRenew: {
     type: Boolean,
-    default: true
+    default: false
   },
   paymentMethod: {
     type: String,
@@ -36,9 +36,6 @@ const subscriptionSchema = new mongoose.Schema({
   lastPaymentDate: {
     type: Date
   },
-  nextBillingDate: {
-    type: Date
-  },
   canceledAt: {
     type: Date,
     default: null
@@ -46,6 +43,18 @@ const subscriptionSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now
+  },
+  last4: {
+    type: String,
+    default: null
+  },
+  cvv: {
+    type: String,
+    default: null
+  },
+  FC: {
+    type: String,
+    default: null
   }
 });
 

@@ -1,4 +1,4 @@
-import { getUserInfo, updateDiscordByUserId } from '../services/user.service.js';
+import { getUserInfo, updateDiscordByUserId, removeNotificationDataAndAlerts } from '../services/user.service.js';
 
 export const getUserProfile = async (req, res) => {
   try {
@@ -34,5 +34,22 @@ export const postDiscordSetting = async (req, res) => {
   } catch (error) {
     console.error("Error updating Discord ID:", error);
     res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+
+export const deleteNotificationType = async (req, res) => {
+  const userId = req.userTk.id; // autenticación previa
+  const { type } = req.body; // tipo de notificación: email, whatsapp o discord
+  console.log("datos recibidos: ", userId +"tipo: " + type)
+  try {
+    const result = await removeNotificationDataAndAlerts(userId, type);
+    res.status(200).json({
+      message: `Datos y alertas de tipo "${type}" eliminados correctamente`,
+      updatedSettings: result.updatedSettings,
+      deletedAlerts: result.deletedAlerts
+    });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
   }
 };
