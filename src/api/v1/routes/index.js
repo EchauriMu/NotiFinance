@@ -11,6 +11,7 @@ import subsRoutes from './subs.routes'
 import { getServicesStatus } from '../controllers/status.controller';
 import reserRoutes from './recovery.routes'
 import configRoutes from './config.routes'
+import predictionRoutes from './prediction.routes.js';
 
 const routerAPI = (app) => {
   const router = Router();
@@ -34,6 +35,8 @@ const routerAPI = (app) => {
   router.use('/status', authenticateToken, getServicesStatus);
 
   router.use('/config', authenticateToken, configRoutes);
+
+  router.use('/prediction', authenticateToken, predictionRoutes);
 
   return router;
 };
