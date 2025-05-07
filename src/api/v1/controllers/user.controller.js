@@ -1,4 +1,6 @@
 import { getUserInfo, updateDiscordByUserId, removeNotificationDataAndAlerts } from '../services/user.service.js';
+import * as userService from '../services/user.service.js';
+
 
 export const getUserProfile = async (req, res) => {
   try {
@@ -51,5 +53,24 @@ export const deleteNotificationType = async (req, res) => {
     });
   } catch (error) {
     res.status(400).json({ error: error.message });
+  }
+};
+
+export const applyForAnalystRole = async (req, res) => {
+  try {
+    const userId = req.userTk.id; // ID del usuario autenticado
+    const applicationData = req.body;
+
+    // Validación básica (puedes añadir más con express-validator)
+    if (!applicationData.motivation || !applicationData.experience) {
+      return res.status(400).json({ message: 'El motivo y la experiencia son campos requeridos.' });
+    }
+
+    const result = await userService.submitAnalystApplication(userId, applicationData);
+    res.status(200).json(result);
+
+  } catch (error) {
+    console.error("Error en controller applyForAnalystRole:", error.message);
+    res.status(error.statusCode || 500).json({ message: error.message || 'Error interno al procesar la solicitud.' });
   }
 };
