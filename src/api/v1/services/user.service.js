@@ -1,5 +1,60 @@
 import { User } from '../models/userModel.js';
-import {Subscription}from '../models/subsModel'
+import {Subscription}from '../models/subsModel';
+import axios from 'axios';
+import config from '../../../config/config.js';
+
+export const submitAnalystApplication = async (userId, applicationData) => {
+  try {
+    const user = await User.findById(userId).select('username email');
+    if (!user) {
+      throw new Error('Usuario no encontrado.');
+    }
+
+    const subject = `Nueva Solicitud para Analista: ${user.username}`;
+
+    // Construir el cuerpo del email con los datos de la aplicación
+    // Puedes usar HTML para formatearlo mejor
+    const emailContent = `
+      <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+        <h2>Nueva Solicitud para ser Analista en NotiFinance</h2>
+        <p><strong>Usuario:</strong> ${userId}</p>
+        <p><strong>Usuario:</strong> ${user.username}</p>
+        <p><strong>Email del Usuario:</strong> ${user.email}</p>
+        <hr>
+        <h3>Detalles de la Solicitud:</h3>
+        <p><strong>Motivación:</strong></p>
+        <p style="white-space: pre-wrap;">${applicationData.motivation || 'No proporcionada'}</p>
+        <p><strong>Experiencia y Conocimiento:</strong></p>
+        <p style="white-space: pre-wrap;">${applicationData.experience || 'No proporcionada'}</p>
+        
+        <h4>Perfiles Sociales/Públicos:</h4>
+        <ul>
+          <li><strong>Twitter/X:</strong> ${applicationData.twitterUrl ? `<a href="${applicationData.twitterUrl}">${applicationData.twitterUrl}</a>` : 'No proporcionado'}</li>
+          <li><strong>Otro Perfil:</strong> ${applicationData.otherPublicProfileUrl ? `<a href="${applicationData.otherPublicProfileUrl}">${applicationData.otherPublicProfileUrl}</a>` : 'No proporcionado'}</li>
+        </ul>
+        
+        <p><strong>Información Adicional:</strong></p>
+        <p style="white-space: pre-wrap;">${applicationData.additionalInfo || 'No proporcionada'}</p>
+        <hr>
+        <p>Por favor, revisa esta solicitud y toma las acciones correspondientes.</p>
+      </div>
+    `;
+
+    const emailSendURL = `https://ntemail.onrender.com/sendStyle/albertopardo301@gmail.com`;
+    const headers = {
+      Authorization: `Bearer ${config.EMAIL_API_TOKEN || 'NotifinanceTK'}`, // Usa tu variable de entorno para el token
+      "Content-Type": "application/json"
+    };
+
+    await axios.post(emailSendURL, { content: emailContent, subject: subject }, { headers }); // Añade el subject
+
+    return { success: true, message: 'Solicitud enviada correctamente.' };
+
+  } catch (error) {
+    console.error("Error en submitAnalystApplication service:", error.response ? error.response.data : error.message);
+    throw new Error(error.response?.data?.message || 'No se pudo procesar la solicitud para ser analista.');
+  }
+};
 
 export const getUserInfo = async (userId) => {
   try {

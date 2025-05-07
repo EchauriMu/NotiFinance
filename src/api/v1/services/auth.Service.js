@@ -239,7 +239,7 @@ export const verifyEmailService = async (userId, token) => {
     // Enviar el correo con el HTML usando la ruta /sendStyle
     const emailSendUrl = `https://ntemail.onrender.com/sendStyle/${user.email}`;
     const headers = {
-      Authorization: `Bearer NotifinanceTK`,
+      Authorization: `Bearer ${config.EMAIL_API_TOKEN || 'NotifinanceTK'}`, // Usa tu variable de entorno para el token
       "Content-Type": "application/json"
     };
     
