@@ -11,6 +11,7 @@ const SERVICIOS = {
 export const checkStatus = async (url) => {
   try {
     const response = await axios.get(url, { timeout: 5000 });
+    console.log('respuesta de ' + url+ ':  '+ response.status);
     if (response.status >= 200 && response.status < 500) {
       return 'Operativo'; // Si la respuesta HTTP es exitosa, se devuelve "Operativo"
     } else {
