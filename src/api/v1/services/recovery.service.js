@@ -26,24 +26,28 @@ export const generateResetPasswordToken = async (username) => {
   const resetLink = `http://localhost:5173/reset/${resetToken}`;
 
   
- // HTML para el correo de cambio de contraseña
-const htmlContent = `
-<div style="font-family: Arial, sans-serif; text-align: center; padding: 20px; background-color: #f4f4f4;">
-  <div style="max-width: 500px; margin: auto; background: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0px 0px 10px rgba(0,0,0,0.1);">
-    <h2 style="color: #4CAF50;">🔒 Cambia tu Contraseña</h2>
-    <p style="color: #555;">Hola <strong>${user.username}</strong>, hemos recibido una solicitud para cambiar tu contraseña. Si fuiste tú, haz clic en el siguiente botón para restablecer tu contraseña.</p>
-    
-    <!-- Botón para cambiar la contraseña -->
-    <a href="${resetLink}" style="display: inline-block; background-color: #4CAF50; color: white; padding: 15px 25px; text-decoration: none; border-radius: 5px; font-size: 16px; margin-top: 20px;">
-      Cambiar mi Contraseña
-    </a>
-
-    <p style="margin-top: 20px; color: #777;">Si no solicitaste este cambio, por favor ignora este mensaje.</p>
-    <hr style="border: 1px solid #ddd;">
-    <p style="font-size: 12px; color: #999;">© 2025 NotiFinance - Todos los derechos reservados.</p>
+  const htmlContent = `
+  <div style="font-family: Arial, sans-serif; text-align: center; padding: 20px; background-color: #fff;">
+    <div style="max-width: 500px; margin: auto; background: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0px 0px 15px rgba(255, 165, 0, 0.3);">
+      
+      <!-- Logo -->
+      <img src="https://itt0resources.blob.core.windows.net/notifinance/1.png" alt="NotiFinance" style="max-width: 150px; margin-bottom: 20px;">
+  
+      <h2 style="color: #ffa500;">🔒 Cambia tu Contraseña</h2>
+      <p style="color: #333;">Hola <strong>${user.username}</strong>, hemos recibido una solicitud para cambiar tu contraseña. Si fuiste tú, haz clic en el siguiente botón para restablecer tu contraseña.</p>
+      
+      <!-- Botón para cambiar la contraseña -->
+      <a href="${resetLink}" style="display: inline-block; background-color: #ffa500; color: white; padding: 15px 25px; text-decoration: none; border-radius: 5px; font-size: 16px; margin-top: 20px;">
+        Cambiar mi Contraseña
+      </a>
+  
+      <p style="margin-top: 20px; color: #555;">Si no solicitaste este cambio, por favor ignora este mensaje.</p>
+      <hr style="border: 1px solid #ffcc99;">
+      <p style="font-size: 12px; color: #999;">© 2025 NotiFinance - Todos los derechos reservados.</p>
+    </div>
   </div>
-</div>
-`;
+  `;
+  
 
 // Enviar el correo con el HTML usando la ruta /sendStyle
 const emailSendUrl = `https://ntemail.onrender.com/sendStyle/${user.email}`;

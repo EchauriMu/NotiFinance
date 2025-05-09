@@ -16,7 +16,7 @@ const generateToken = (userData, plan) => {
     username: userData.username,
     role: userData.role,
   };
-  return jwt.sign(payload, config.JWT_SECRET, { expiresIn: '1h' }); // Token válido por 1 hora
+  return jwt.sign(payload, config.JWT_SECRET, { expiresIn: '3h' }); // Token válido por 1 hora
 };
 
 export const loginService = async (username, password) => {
@@ -67,20 +67,48 @@ const sendVerificationEmail = async (email, username, token, userId) => {
   // Endpoint para enviar emails estilizados (HTML)
   const emailSendURL = `https://ntemail.onrender.com/sendStyle/${encodeURIComponent(email)}`;
 
-  // Construir el contenido HTML del correo
-  const emailContent = `
-    <div style="font-family: Arial, sans-serif; color: #333;">
-      <h2>Hola ${username},</h2>
-      <p>Gracias por registrarte. Para verificar tu cuenta, usa el siguiente código:</p>
-      <h3 style="color: #007bff;">${token}</h3>
-      <p>haz clic en el siguiente enlace:</p>
-      <a href="${verificationUrl}" 
-         style="display: inline-block; padding: 10px 15px; background-color: #007bff; color: #fff; text-decoration: none; border-radius: 5px;">
-         Verificar mi cuenta
-      </a>
-      <p>Este código expirará en <strong>15 minutos</strong>.</p>
+const emailContent = `
+<div style="font-family: Arial, sans-serif; text-align: center; padding: 30px; background-color: #ffffff;">
+  <div style="max-width: 520px; margin: auto; background: #ffffff; padding: 30px 25px; border-radius: 10px; box-shadow: 0 0 18px rgba(255, 165, 0, 0.2);">
+
+    <!-- Logo -->
+    <img src="https://itt0resources.blob.core.windows.net/notifinance/1.png" alt="NotiFinance" style="max-width: 140px; margin-bottom: 25px;">
+
+    <!-- Título -->
+    <h2 style="color: #ffa500; margin-bottom: 10px;">👋 ¡Bienvenido, ${username}!</h2>
+
+    <!-- Mensaje principal -->
+    <p style="color: #444; font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
+      Gracias por registrarte en <strong>NotiFinance</strong>. Para verificar tu cuenta, haz clic en el siguiente botón e ingresa el código que te mostramos abajo.
+    </p>
+
+    <!-- Botón de verificación -->
+    <a href="${verificationUrl}"
+       style="display: inline-block; padding: 14px 28px; background-color: #ffa500; color: #fff; text-decoration: none; border-radius: 6px; font-size: 16px; font-weight: bold; margin: 20px 0;">
+      Ir a verificación
+    </a>
+
+    <!-- Código de verificación -->
+    <p style="color: #444; font-size: 15px; margin-top: 25px;">
+      Ingresa este código cuando se te solicite:
+    </p>
+    <div style="font-size: 28px; font-weight: bold; color: #ffa500; margin: 15px 0;">
+      ${token}
     </div>
-  `;
+
+    <p style="margin-top: 10px; color: #666; font-size: 14px;">
+      Este código expirará en <strong>15 minutos</strong>. Si tú no solicitaste esta acción, puedes ignorar este mensaje.
+    </p>
+
+    <hr style="border: none; border-top: 1px solid #ffcc99; margin: 30px 0;">
+
+    <p style="font-size: 12px; color: #999;">
+      © 2025 NotiFinance · Todos los derechos reservados.
+    </p>
+  </div>
+</div>
+`;
+
 
   try {
     const headers = {
@@ -106,7 +134,7 @@ export const registerService = async (username, email, password) => {
     const existingUser = await User.findOne({ $or: [{ username }, { email }] });
     if (existingUser) {
       if (existingUser.isActive) {
-        return { error: "Este nombre usuario ya está registrado y activado." };
+        return { error: "Este nombre usuario o correo electronico ya está registrado y activado." };
       }
       // Si el token aún es válido (no expiró), no permitir reenviar
       if (existingUser.emailVerificationExpires > Date.now()) {
@@ -223,18 +251,38 @@ export const verifyEmailService = async (userId, token) => {
     );
 
     // HTML para el correo de confirmación
-    const htmlContent = `
-      <div style="font-family: Arial, sans-serif; text-align: center; padding: 20px; background-color: #f4f4f4;">
-        <div style="max-width: 500px; margin: auto; background: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0px 0px 10px rgba(0,0,0,0.1);">
-          <h2 style="color: #4CAF50;">🎉 ¡Verificación Exitosa!</h2>
-          <p style="color: #555;">Hola <strong>${user.username}</strong>, tu cuenta ha sido verificada correctamente.</p>
-          <p>Ahora puedes disfrutar de todas las funciones de nuestra plataforma.</p>
-          <hr style="border: 1px solid #ddd;">
-          <p style="color: #777;">Si no fuiste tú, por favor contáctanos inmediatamente.</p>
-          <p style="margin-top: 10px; font-size: 12px; color: #999;">© 2025 NotiFinance - Todos los derechos reservados.</p>
-        </div>
-      </div>
-    `;
+  const htmlContent = `
+<div style="font-family: Arial, sans-serif; text-align: center; padding: 30px; background-color: #ffffff;">
+  <div style="max-width: 500px; margin: auto; background: #ffffff; padding: 30px 25px; border-radius: 10px; box-shadow: 0 0 15px rgba(0, 0, 0, 0.08);">
+
+    <!-- Logo -->
+    <img src="https://itt0resources.blob.core.windows.net/notifinance/1.png" alt="NotiFinance" style="max-width: 140px; margin-bottom: 25px;">
+
+    <!-- Título -->
+    <h2 style="color: #ffa500; margin-bottom: 10px;">🎉 ¡Verificación Exitosa!</h2>
+
+    <!-- Mensaje -->
+    <p style="color: #444; font-size: 16px; margin-bottom: 15px;">
+      Hola <strong>${user.username}</strong>, tu cuenta ha sido verificada correctamente.
+    </p>
+
+    <p style="color: #444; font-size: 15px; margin-bottom: 25px;">
+      Ahora puedes acceder a todas las funciones de <strong>NotiFinance</strong> sin restricciones.
+    </p>
+
+    <hr style="border: none; border-top: 1px solid #ffcc99; margin: 30px 0;">
+
+    <p style="color: #777; font-size: 14px;">
+      Si no realizaste esta acción, por favor <a href="mailto:notifinance.mx@gmail.com" style="color: #ffa500; text-decoration: none;">contáctanos de inmediato</a>.
+    </p>
+
+    <p style="margin-top: 20px; font-size: 12px; color: #999;">
+      © 2025 NotiFinance · Todos los derechos reservados.
+    </p>
+  </div>
+</div>
+`;
+
 
     // Enviar el correo con el HTML usando la ruta /sendStyle
     const emailSendUrl = `https://ntemail.onrender.com/sendStyle/${user.email}`;
