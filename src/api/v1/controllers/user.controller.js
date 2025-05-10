@@ -9,7 +9,7 @@ export const getUserProfile = async (req, res) => {
 
     const result = await getUserInfo(userId);
 
-    
+    console.log('Resultado de plan userinfo: ' + JSON.stringify(result));
     if (!result.success) {
       return res.status(404).json({ success: false, message: result.message });
     }

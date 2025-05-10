@@ -23,7 +23,8 @@ export const getUserInfo = async (userId) => {
     const response = {
       ...user.toObject(),
       plan: subscription ? subscription.plan : 'Freemium',
-      subscriptionExpiresAt: subscription ? subscription.expiresAt : null
+      subscriptionExpiresAt: subscription ? subscription.expiresAt : null,
+       autoRenew: subscription.autoRenew
     };
 
     return { success: true, data: response };
