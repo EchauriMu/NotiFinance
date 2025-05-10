@@ -40,7 +40,7 @@ export const loginService = async (username, password) => {
     }
 
     const token = generateToken(user); // ← Eliminado el segundo parámetro (userPlan)
-    return { token, status: 200 };
+    return { token, user: { id: user._id, username: user.username, role: user.role }, status: 200 };
   } catch (error) {
     console.error("❌ Error en loginService:", error.message);
     throw new Error("Error interno del servidor");
@@ -290,7 +290,7 @@ export const verifyEmailService = async (userId, token) => {
       Authorization: `Bearer NotifinanceTK`,
       "Content-Type": "application/json"
     };
-    
+
     await axios.post(emailSendUrl, { content: htmlContent }, { headers });
     
 

@@ -25,7 +25,7 @@ res.cookie("authToken", result.token, {
 
 });
 
-    return res.json({ message: "Inicio de sesión exitoso", token: result.token });
+  return res.json({ message: "Inicio de sesión exitoso", token: result.token, user: result.user });
   } catch (error) {
     console.error("❌ Error en el controlador de login:", error.message);
     return res.status(500).json({ message: "Error interno del servidor", error: error.message });
