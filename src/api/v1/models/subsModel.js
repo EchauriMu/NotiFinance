@@ -55,7 +55,21 @@ const subscriptionSchema = new mongoose.Schema({
   FC: {
     type: String,
     default: null
-  }
+  },
+  planChangeRequested: {
+  type: Boolean,
+  default: false
+},
+newRequestedPlan: {
+  type: String,
+  enum: ['Freemium', 'Premium', 'NotiFinance Pro'],
+  default: null
+},
+planChangeEffectiveDate: {
+  type: Date,
+  default: null
+}
+
 });
 
 // Indice para encontrar rápido las suscripciones activas por usuario

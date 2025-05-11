@@ -5,6 +5,7 @@ import * as userService from '../services/user.service.js';
 export const getUserProfile = async (req, res) => {
   try {
     const userId = req.userTk.id; 
+    console.log("User id recividodel token: " + userId);
     if (!userId) return res.status(400).json({ success: false, message: 'ID de usuario no válido' });
 
     const result = await getUserInfo(userId);

@@ -16,7 +16,7 @@ const generateToken = (userData, plan) => {
     username: userData.username,
     role: userData.role,
   };
-  return jwt.sign(payload, config.JWT_SECRET, { expiresIn: '3h' }); // Token válido por 1 hora
+  return jwt.sign(payload, config.JWT_SECRET, { expiresIn: '3h' }); // Token vlido por 3 hora
 };
 
 export const loginService = async (username, password) => {

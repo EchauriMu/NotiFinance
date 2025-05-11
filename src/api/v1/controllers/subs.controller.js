@@ -74,3 +74,22 @@ export const getActiveSubscription = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
+
+
+
+
+export const requestPlanChange = async (req, res) => {
+ const userId = req.userTk.id; // Obtener el userId del token
+  const { newRequestedPlan, effectiveDate } = req.body;
+
+  try {
+    const result = await subscriptionService.handlePlanChangeRequest(userId, newRequestedPlan, effectiveDate);
+    if (result.success) {
+      return res.status(200).json(result);
+    }
+    return res.status(400).json(result);
+  } catch (error) {
+    console.error('❌ Error en requestPlanChange:', error.message);
+    return res.status(500).json({ success: false, message: 'Error interno del servidor' });
+  }
+};

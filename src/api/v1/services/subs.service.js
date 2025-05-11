@@ -64,3 +64,29 @@ export const cancelSubscription = async (userId, subscriptionId) => {
     { new: true, runValidators: true }
   );
 };
+
+
+
+export const handlePlanChangeRequest = async (userId, newRequestedPlan, effectiveDate) => {
+  if (!userId || !newRequestedPlan || !effectiveDate) {
+    return { success: false, message: 'Faltan datos obligatorios' };
+  }
+
+  const allowedPlans = ['Freemium', 'Premium', 'NotiFinance Pro'];
+  if (!allowedPlans.includes(newRequestedPlan)) {
+    return { success: false, message: 'Plan solicitado no válido' };
+  }
+
+  const activeSub = await Subscription.findOne({ user: userId, status: 'active' });
+  if (!activeSub) {
+    return { success: false, message: 'Suscripción activa no encontrada' };
+  }
+
+  activeSub.planChangeRequested = true;
+  activeSub.newRequestedPlan = newRequestedPlan;
+  activeSub.planChangeEffectiveDate = new Date(effectiveDate);
+
+  await activeSub.save();
+
+  return { success: true, message: 'Cambio de plan solicitado correctamente', data: activeSub };
+};
