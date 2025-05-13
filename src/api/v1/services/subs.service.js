@@ -14,16 +14,6 @@ export const updateSubscription = async (userId, subscriptionId, plan, last4, cv
     throw new Error('Plan especificado no es válido');
   }
 
-  // Obtener los detalles del plan (esto podría provenir de una base de datos o ser calculado dinámicamente)
-  let price = 'someCalculatedPrice'; // Este es un ejemplo, deberías calcular el precio aquí dependiendo del plan
-  if (plan === 'Freemium') {
-    price = '0';  // Precio del plan Freemium
-  } else if (plan === 'Premium') {
-    price = '9.99'; // Precio del plan Premium
-  } else if (plan === 'NotiFinance Pro') {
-    price = '19,99'; // Precio del plan NotiFinance Pro
-  }
-
   // Calcular la fecha de expiración (30 días desde la fecha actual)
   const expirationDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 días
   
@@ -36,7 +26,6 @@ export const updateSubscription = async (userId, subscriptionId, plan, last4, cv
     {
       $set: {
         plan,         // Actualizamos el plan
-        price,        // Actualizamos el precio
         status: 'active', 
         expiresAt: expirationDate, // Fecha de expiración
         last4,        // Últimos 4 dígitos de la tarjeta

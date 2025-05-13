@@ -13,6 +13,7 @@ import reserRoutes from './recovery.routes'
 import configRoutes from './config.routes'
 import predictionRoutes from './prediction.routes.js';
 import adminRoutes from './admin.routes.js';
+import newsRoutes from './news.routes.js'; // Importa las rutas de noticias
 
 const routerAPI = (app) => {
   const router = Router();
@@ -40,6 +41,8 @@ const routerAPI = (app) => {
   router.use('/prediction', authenticateToken, predictionRoutes);
 
   router.use('/admin', adminRoutes);
+
+  router.use('/news', newsRoutes); // Agrega las rutas de noticias
 
   return router;
 };
