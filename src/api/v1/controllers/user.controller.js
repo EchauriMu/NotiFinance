@@ -75,3 +75,86 @@ export const applyForAnalystRole = async (req, res) => {
     res.status(error.statusCode || 500).json({ message: error.message || 'Error interno al procesar la solicitud.' });
   }
 };
+
+export const getAllUsers = async (req, res) => {
+  try {
+    const users = await userService.getAllUsers();
+
+    res.status(200).json({ success: true, data: users });
+    
+  } catch (error) {
+    console.error("Error en getAllUsers:", error.message);
+    res.status(500).json({ success: false, message: 'Error interno del servidor' });
+  }
+};
+
+export const softDeleteUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const user = await userService.softDeleteUser(userId);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'Usuario no encontrado.' });
+    }
+
+    res.status(200).json({ success: true, message: 'Usuario desactivado correctamente.', data: user });
+  } catch (error) {
+    console.error("Error en softDeleteUser:", error.message);
+    res.status(500).json({ success: false, message: 'Error interno del servidor.' });
+  }
+};
+
+export const hardDeleteUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const result = await userService.hardDeleteUser(userId);
+    if (!result) {
+      return res.status(404).json({ success: false, message: 'Usuario no encontrado.' });
+    }
+
+    res.status(200).json({ success: true, message: 'Usuario eliminado permanentemente.' });
+  } catch (error) {
+    console.error("Error en hardDeleteUser:", error.message);
+    res.status(500).json({ success: false, message: 'Error interno del servidor.' });
+  }
+};
+
+export const reactivateUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const user = await userService.reactivateUser(userId);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'Usuario no encontrado.' });
+    }
+
+    res.status(200).json({ success: true, message: 'Usuario reactivado correctamente.', data: user });
+  } catch (error) {
+    console.error("Error en reactivateUser:", error.message);
+    res.status(500).json({ success: false, message: 'Error interno del servidor.' });
+  }
+};
+
+export const changeUserRole = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { role } = req.body;
+
+    // Validar que el rol sea uno de los permitidos
+    const validRoles = ['basic', 'analist', 'admin'];
+    if (!validRoles.includes(role)) {
+      return res.status(400).json({ success: false, message: 'Rol no válido. Los roles permitidos son: basic, analist, admin.' });
+    }
+
+    const user = await userService.changeUserRole(userId, role);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'Usuario no encontrado.' });
+    }
+
+    res.status(200).json({ success: true, message: `Rol del usuario actualizado a '${role}' correctamente.`, data: user });
+  } catch (error) {
+    console.error("Error en changeUserRole:", error.message);
+    res.status(500).json({ success: false, message: 'Error interno del servidor.' });
+  }
+};

@@ -63,7 +63,7 @@ const generateEmailVerificationToken = () => {
 
 // Función para enviar el correo de verificación usando la API sendStyle (HTML)
 const sendVerificationEmail = async (email, username, token, userId) => {
-  const verificationUrl = `http://localhost:5173/verify/${userId}`;
+  const verificationUrl = `https://notifinance-es.netlify.app/verify/${userId}`;
   // Endpoint para enviar emails estilizados (HTML)
   const emailSendURL = `https://ntemail.onrender.com/sendStyle/${encodeURIComponent(email)}`;
 

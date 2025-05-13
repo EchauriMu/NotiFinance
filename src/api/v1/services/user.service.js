@@ -306,3 +306,65 @@ export const revokeAnalystRole = async (userIdToRevoke, adminUserId) => {
     throw serviceError;
   }
 };
+
+export const getAllUsers = async () => {
+  try {
+    const users = await User.find().select('username email role isActive createdAt lastLogin');
+    return users;
+  } catch (error) {
+    console.error("Error en service getAllUsers:", error.message);
+    throw new Error('Error al obtener la lista de usuarios.');
+  }
+};
+
+export const softDeleteUser = async (userId) => {
+  try {
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { isActive: false },
+      { new: true }
+    );
+    return user;
+  } catch (error) {
+    console.error("Error en service softDeleteUser:", error.message);
+    throw new Error('Error al desactivar el usuario.');
+  }
+};
+
+export const hardDeleteUser = async (userId) => {
+  try {
+    const result = await User.findByIdAndDelete(userId);
+    return result;
+  } catch (error) {
+    console.error("Error en service hardDeleteUser:", error.message);
+    throw new Error('Error al eliminar el usuario.');
+  }
+};
+
+export const reactivateUser = async (userId) => {
+  try {
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { isActive: true },
+      { new: true }
+    );
+    return user;
+  } catch (error) {
+    console.error("Error en service reactivateUser:", error.message);
+    throw new Error('Error al reactivar el usuario.');
+  }
+};
+
+export const changeUserRole = async (userId, role) => {
+  try {
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { role },
+      { new: true }
+    );
+    return user;
+  } catch (error) {
+    console.error("Error en service changeUserRole:", error.message);
+    throw new Error('Error al cambiar el rol del usuario.');
+  }
+};

@@ -1,8 +1,7 @@
 export const isAdmin = (req, res, next) => {
-    // Asume que authenticateToken ya añadió req.userTk
+
     if (!req.userTk) {
-      // Este caso no debería ocurrir si authenticateToken se ejecuta primero, pero es una buena práctica
-      return res.status(401).json({ message: 'No autorizado.' });
+     return res.status(401).json({ message: 'No autorizado.' });
     }
   
     if (req.userTk.role !== 'admin') {

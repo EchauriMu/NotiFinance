@@ -18,7 +18,6 @@ export const authenticateToken = (req, res, next) => {
     }
 
     req.userTk = user;  // Agregar el usuario al objeto de la solicitud
- 
-    next();  // Continuar con la solicitud
+   next();  // Continuar con la solicitud
   });
 };

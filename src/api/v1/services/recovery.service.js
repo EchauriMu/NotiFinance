@@ -23,7 +23,7 @@ export const generateResetPasswordToken = async (username) => {
 
   await user.save();
 
-  const resetLink = `http://localhost:5173/reset/${resetToken}`;
+  const resetLink = `https://notifinance-es.netlify.app/reset/${resetToken}`;
 
   
   const htmlContent = `
