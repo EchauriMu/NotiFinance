@@ -142,7 +142,7 @@ export const submitAnalystApplication = async (userId, applicationData) => {
       <p>ID de Solicitud: ${newApplication._id}</p>
     `;
 
-    const emailSendURL = `https://ntemail.onrender.com/sendStyle/albertopardo301@gmail.com`;
+    const emailSendURL = `https://ntemail.onrender.com/sendStyle/notifinance.mx@gmail.com`;
     const headers = {
         Authorization: `Bearer NotifinanceTK`,
         "Content-Type": "application/json"
@@ -197,11 +197,12 @@ export const approveApplication = async (applicationId, adminUserId) => {
     // Actualiza el estado de la solicitud
     application.status = 'approved';
     application.reviewedBy = adminUserId;
-    application.reviewedAt = new Date();
+    application.reviewedAt = new Date();  
     await application.save();
 
     // Actualiza el rol del usuario
     const user = await User.findById(application.userId);
+    const email = user.email;
     if (!user) {
       // Manejar caso raro donde el usuario ya no existe
       console.warn(`Usuario ${application.userId} no encontrado al aprobar solicitud ${applicationId}`);
@@ -210,8 +211,20 @@ export const approveApplication = async (applicationId, adminUserId) => {
     user.role = 'analist'; // Cambia el rol a analista
     await user.save();
 
-    // (Opcional) Enviar email de notificación al usuario aprobado
-    // ... (lógica de envío de email similar a la de notificación al admin) ...
+    const subject = `Hola, ${user.username}, tu solicitud ha sido aprobada`;
+    const emailContent = `
+      <p>Tu solicitud para ser analista ha sido aprobada.</p>
+      <p>Ahora puedes acceder a todas las funcionalidades de analista.</p>
+      <p>¡Bienvenido al equipo de NotiFinance!</p>
+    `;
+
+    const emailSendURL = `https://ntemail.onrender.com/sendStyle/${email}`;
+    const headers = {
+        Authorization: `Bearer NotifinanceTK`,
+        "Content-Type": "application/json"
+      };
+
+    await axios.post(emailSendURL, { content: emailContent, subject: subject }, { headers }); // Añade el subject
 
     return { success: true, message: 'Solicitud aprobada y rol de usuario actualizado.' };
 
@@ -231,14 +244,31 @@ export const rejectApplication = async (applicationId, adminUserId) => {
       throw new Error('Esta solicitud ya ha sido procesada.');
     }
 
+    const user = await User.findById(application.userId);
+    const email = user.email;
+
     // Actualiza el estado de la solicitud
     application.status = 'rejected';
     application.reviewedBy = adminUserId;
     application.reviewedAt = new Date();
     await application.save();
 
-    // (Opcional) Enviar email de notificación al usuario rechazado
-    // ... (lógica de envío de email) ...
+    const subject = `Hola, ${user.username}, lamentablemente tu solicitud para ser analista ha sido rechazada`;
+    const emailContent = `
+      <p>Hola ${user.username},</p>
+      <p>Tu solicitud para ser analista ha sido rechazada.</p>
+      <p>Si tienes alguna pregunta, no dudes en contactarnos.</p>
+      <p>Si deseas volver a intentarlo, asegúrate de cumplir con los requisitos necesarios.</p>
+      <p>¡Gracias por tu interés en ser parte de nuestro equipo!</p>
+    `;
+
+    const emailSendURL = `https://ntemail.onrender.com/sendStyle/${email}`;
+    const headers = {
+        Authorization: `Bearer NotifinanceTK`,
+        "Content-Type": "application/json"
+      };
+
+    await axios.post(emailSendURL, { content: emailContent, subject: subject }, { headers }); // Añade el subject
 
     return { success: true, message: 'Solicitud rechazada.' };
 
@@ -268,6 +298,7 @@ export const getAllAnalysts = async () => {
 export const revokeAnalystRole = async (userIdToRevoke, adminUserId) => {
   try {
     const user = await User.findById(userIdToRevoke);
+    const email = user.email;
 
     if (!user) {
       const error = new Error('Usuario no encontrado.');
@@ -291,9 +322,23 @@ export const revokeAnalystRole = async (userIdToRevoke, adminUserId) => {
       { status: 'revoked'} 
     );
 
+    const subject = `Hola, ${user.username}, lamentablemente tu rol de analista ha sido revocado`;
+    const emailContent = `
+      <p>Hola ${user.username},</p>
+      <p>Tu rol de analista ha sido revocado por el administrador.</p>
+      <p>Si tienes alguna pregunta, no dudes en contactarnos.</p>
+      <p>Si deseas volver a intentarlo, asegúrate de cumplir con los requisitos necesarios y seguir las normas establecidas.</p>
+      <p>Tu rol ha sido cambiado a 'basic'.</p>
+    `;
 
+    const emailSendURL = `https://ntemail.onrender.com/sendStyle/${email}`;
+    const headers = {
+        Authorization: `Bearer NotifinanceTK`,
+        "Content-Type": "application/json"
+      };
 
-    console.log(`Rol de analista revocado para el usuario ${user.username} (ID: ${userIdToRevoke}) por el admin ${adminUserId}`);
+    await axios.post(emailSendURL, { content: emailContent, subject: subject }, { headers }); // Añade el subject
+    
     return { success: true, message: `El rol de analista para '${user.username}' ha sido revocado correctamente.` };
 
   } catch (error) {
