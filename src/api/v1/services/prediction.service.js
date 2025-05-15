@@ -23,14 +23,9 @@ export const createPrediction = async (predictionData, analystId, analystUsernam
   }
 };
 
-/**
- * Obtiene todas las predicciones, opcionalmente filtradas.
- * TODO: Implementar filtros y paginación si es necesario.
- */
 export const getAllPredictions = async (filters = {}) => {
   try {
-    // Ejemplo básico: ordenar por fecha de creación descendente
-    // Aquí podrías añadir filtros por cryptoSymbol, fechas, etc. basados en 'filters'
+
     const predictions = await Prediction.find(filters).sort({ createdAt: -1 }).lean(); // .lean() para objetos JS simples
     return predictions;
   } catch (error) {
@@ -85,17 +80,14 @@ export const updatePrediction = async (predictionId, updateData, requestingAnaly
       throw new Error('PREDICTION_NOT_FOUND');
     }
 
-    // *** ¡Verificación de propiedad! ***
+
     if (prediction.analystId.toString() !== requestingAnalystId.toString()) {
       throw new Error('FORBIDDEN_ACTION'); // No es el dueño
     }
 
-    // Actualiza los campos permitidos (evita que actualicen analystId o analystUsername)
     if (updateData.cryptoSymbol) prediction.cryptoSymbol = updateData.cryptoSymbol.toUpperCase();
     if (updateData.predictionText) prediction.predictionText = updateData.predictionText;
-    // Actualiza otros campos opcionales si existen (targetDate, status)
 
-    // Mongoose se encargará de actualizar `updatedAt` con { timestamps: true }
     await prediction.save();
     return prediction;
 
@@ -107,7 +99,6 @@ export const updatePrediction = async (predictionId, updateData, requestingAnaly
      if (error.message === 'FORBIDDEN_ACTION') {
       throw new Error('No tienes permiso para modificar esta predicción.');
     }
-    // Podrías manejar errores de validación aquí también
     throw new Error('Error al actualizar la predicción.');
   }
 };
@@ -123,7 +114,6 @@ export const deletePrediction = async (predictionId, requestingAnalystId) => {
       throw new Error('PREDICTION_NOT_FOUND');
     }
 
-    // *** ¡Verificación de propiedad! ***
     if (prediction.analystId.toString() !== requestingAnalystId.toString()) {
       throw new Error('FORBIDDEN_ACTION');
     }

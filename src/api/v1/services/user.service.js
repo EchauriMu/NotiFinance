@@ -127,8 +127,8 @@ export const submitAnalystApplication = async (userId, applicationData) => {
       email: user.email,
       motivation: applicationData.motivation,
       experience: applicationData.experience,
-      twitterUrl: applicationData.twitterUrl,
-      otherPublicProfileUrl: applicationData.otherPublicProfileUrl,
+      twitterURL: applicationData.twitterURL,
+      otherPublicProfileURL: applicationData.otherPublicProfileURL,
       additionalInfo: applicationData.additionalInfo,
       status: 'pending', // Estado inicial
     });
