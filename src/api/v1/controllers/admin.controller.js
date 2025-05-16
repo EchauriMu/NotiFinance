@@ -103,7 +103,12 @@ export const setAdminEmailHandler = async (req, res) => {
     await adminUser.save();
 
     // Enviar correo de verificación (igual que antes)
-    const verificationUrl = `https://notifinance-es.netlify.app/verify/${adminUser._id}`;
+    const verificationUrl = `http://localhost:5173/verify-admin`;
+
+
+
+
+
     const emailSendURL = `https://ntemail.onrender.com/sendStyle/${encodeURIComponent(email)}`;
     const emailContent = `
 <div style="font-family: Arial, sans-serif; text-align: center; padding: 30px; background-color: #ffffff;">
@@ -152,5 +157,48 @@ export const setAdminEmailHandler = async (req, res) => {
   } catch (error) {
     console.error("Controller Error - setAdminEmailHandler:", error);
     res.status(500).json({ message: error.message || 'Error interno al actualizar el correo.' });
+  }
+};
+
+export const verifyAdminEmailHandler = async (req, res) => {
+  try {
+    const adminUserId = req.userTk.id;
+    const { token } = req.body;
+
+    if (!token) {
+      return res.status(400).json({ message: 'El código de verificación es requerido.' });
+    }
+
+    const adminUser = await User.findById(adminUserId);
+    if (!adminUser || adminUser.role !== 'admin') {
+      return res.status(403).json({ message: 'No autorizado.' });
+    }
+
+    if (
+      !adminUser.emailVerificationToken ||
+      !adminUser.emailVerificationExpires ||
+      !adminUser.pendingEmail
+    ) {
+      return res.status(400).json({ message: 'No hay un correo pendiente de verificación.' });
+    }
+
+    if (
+      adminUser.emailVerificationToken.toString() !== token.toString() ||
+      adminUser.emailVerificationExpires < new Date()
+    ) {
+      return res.status(400).json({ message: 'Código inválido o expirado.' });
+    }
+
+    // Actualiza el correo y limpia los campos temporales
+    adminUser.email = adminUser.pendingEmail;
+    adminUser.pendingEmail = null;
+    adminUser.emailVerificationToken = null;
+    adminUser.emailVerificationExpires = null;
+    await adminUser.save();
+
+    return res.status(200).json({ message: 'Correo verificado y actualizado correctamente.' });
+  } catch (error) {
+    console.error("Controller Error - verifyAdminEmailHandler:", error);
+    res.status(500).json({ message: error.message || 'Error interno al verificar el correo.' });
   }
 };

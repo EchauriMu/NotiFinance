@@ -16,5 +16,6 @@ router.patch('/applications/:applicationId/reject', adminController.rejectApplic
 router.get('/analysts', adminController.getAllAnalystsHandler);
 router.patch('/users/:userId/revoke-analyst-role', adminController.revokeAnalystRoleHandler); // << NUEVA RUTA
 router.post('/set-email', adminController.setAdminEmailHandler);
+router.post('/verify-email', adminController.verifyAdminEmailHandler);
 
 export default router;
