@@ -10,7 +10,7 @@ const generateRandomPhone = () => {
 
 const userSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
-  email: { type: String, required: true, unique: true, lowercase: true },
+  email: { type: String, unique: true, lowercase: true },
   password: { type: String, required: true },
   role: { 
     type: String, 
@@ -28,6 +28,7 @@ const userSchema = new mongoose.Schema({
   phoneVerificationExpires: { type: Date, default: null },
   emailVerificationToken: { type: String, default: null },
   emailVerificationExpires: { type: Date, default: null },
+  pendingEmail: { type: String, default: null }, 
   isPhoneVerified: { type: Boolean, default: false },
   isActive: { type: Boolean, default: false },
   lastLogin: { type: Date, default: null },

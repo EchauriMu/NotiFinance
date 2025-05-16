@@ -63,9 +63,9 @@ export const getActiveSubscription = async (req, res) => {
   try {
     const userId = req.userTk.id; // Obtener el userId del token
     const subscription = await subscriptionService.getSubscriptionByUserId(userId);
+    console.log('Suscripción activa:', subscription);
     
-    console.log(subscription);
-    if (!subscription) {
+   if (!subscription) {
       return res.status(404).json({ error: 'No active subscription found for the user' });
     }
 
@@ -75,13 +75,40 @@ export const getActiveSubscription = async (req, res) => {
   }
 };
 
+export const updateAutoRenew = async (req, res) => {
+  try {
+    const userId = req.userTk.id; // Obtener el userId del token
+    const { autoRenew } = req.body; // Recibir el nuevo estado de auto-renovación
 
+    // Validar que el valor de autoRenew sea booleano
+    if (typeof autoRenew !== 'boolean') {
+      return res.status(400).json({ error: 'El valor de autoRenew debe ser booleano (true o false)' });
+    }
 
+    // Buscar la suscripción activa del usuario
+    const currentSubscription = await subscriptionService.getSubscriptionByUserId(userId);
+    if (!currentSubscription) {
+      return res.status(404).json({ error: 'No se encontró una suscripción activa para este usuario' });
+    }
+
+    // Actualizar el estado de auto-renovación
+    const updatedSubscription = await subscriptionService.updateAutoRenew(
+      userId,
+      currentSubscription._id,
+      autoRenew
+    );
+
+    res.status(200).json({ message: 'Estado de auto-renovación actualizado correctamente', subscription: updatedSubscription });
+  } catch (error) {
+    console.error('Error al actualizar el estado de auto-renovación:', error.message);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+};
 
 export const requestPlanChange = async (req, res) => {
  const userId = req.userTk.id; // Obtener el userId del token
   const { newRequestedPlan, effectiveDate } = req.body;
-
+console.log(req.body);
   try {
     const result = await subscriptionService.handlePlanChangeRequest(userId, newRequestedPlan, effectiveDate);
     if (result.success) {

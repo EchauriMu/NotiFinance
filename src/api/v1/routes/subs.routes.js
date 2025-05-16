@@ -1,7 +1,6 @@
-
-
 import express from 'express';
 import * as subscriptionController from '../controllers/subs.controller.js';
+import { updateAutoRenew } from '../controllers/subs.controller.js';
 
 const router = express.Router();
 
@@ -17,5 +16,8 @@ router.post('/cancel', subscriptionController.cancel); // Cancelar suscripción
 
 // Ruta para obtener suscripción activa
 router.get('/me/active', subscriptionController.getActiveSubscription); // Obtener la suscripción activa
+
+// Ruta para actualizar el estado de auto-renovación
+router.patch('/autorenew', updateAutoRenew);
 
 export default router;

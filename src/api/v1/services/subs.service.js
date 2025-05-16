@@ -5,7 +5,6 @@ export const getSubscriptionByUserId = async (userId) => {
   return await Subscription.findOne({ user: userId });
 };
 
-
 // Servicio para actualizar la suscripción
 export const updateSubscription = async (userId, subscriptionId, plan, last4, cvv, FC, autoRenew) => {
   // Verificar si el plan es válido (esto podría ir en una constante o en la base de datos)
@@ -44,7 +43,6 @@ export const updateSubscription = async (userId, subscriptionId, plan, last4, cv
   return updatedSubscription;
 };
 
-
 // Cancelar suscripción (marcar como 'canceled')
 export const cancelSubscription = async (userId, subscriptionId) => {
   return await Subscription.findOneAndUpdate(
@@ -53,8 +51,6 @@ export const cancelSubscription = async (userId, subscriptionId) => {
     { new: true, runValidators: true }
   );
 };
-
-
 
 export const handlePlanChangeRequest = async (userId, newRequestedPlan, effectiveDate) => {
   if (!userId || !newRequestedPlan || !effectiveDate) {
@@ -78,4 +74,23 @@ export const handlePlanChangeRequest = async (userId, newRequestedPlan, effectiv
   await activeSub.save();
 
   return { success: true, message: 'Cambio de plan solicitado correctamente', data: activeSub };
+};
+
+export const updateAutoRenew = async (userId, subscriptionId, autoRenew) => {
+  try {
+    const updatedSubscription = await Subscription.findOneAndUpdate(
+      { _id: subscriptionId, user: userId },
+      { $set: { autoRenew } },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedSubscription) {
+      throw new Error('No se encontró la suscripción para actualizar el estado de auto-renovación');
+    }
+
+    return updatedSubscription;
+  } catch (error) {
+    console.error('Error en updateAutoRenew:', error.message);
+    throw new Error('Error al actualizar el estado de auto-renovación');
+  }
 };
