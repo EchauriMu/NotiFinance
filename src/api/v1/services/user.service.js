@@ -369,6 +369,9 @@ export const softDeleteUser = async (userId) => {
       { isActive: false },
       { new: true }
     );
+    if (user) {
+      await sendUserDeletedEmail(user.email, user.username, "desactivada");
+    }
     return user;
   } catch (error) {
     console.error("Error en service softDeleteUser:", error.message);
@@ -378,6 +381,11 @@ export const softDeleteUser = async (userId) => {
 
 export const hardDeleteUser = async (userId) => {
   try {
+    // Buscar usuario antes de eliminar para obtener email y username
+    const user = await User.findById(userId);
+    if (user) {
+      await sendUserDeletedEmail(user.email, user.username, "eliminada");
+    }
     const result = await User.findByIdAndDelete(userId);
     return result;
   } catch (error) {
@@ -393,6 +401,9 @@ export const reactivateUser = async (userId) => {
       { isActive: true },
       { new: true }
     );
+    if (user) {
+      await sendUserReactivatedEmail(user.email, user.username);
+    }
     return user;
   } catch (error) {
     console.error("Error en service reactivateUser:", error.message);
@@ -413,3 +424,69 @@ export const changeUserRole = async (userId, role) => {
     throw new Error('Error al cambiar el rol del usuario.');
   }
 };
+
+async function sendUserDeletedEmail(email, username, tipo = "eliminada") {
+  const subject = `Tu cuenta ha sido ${tipo === "eliminada" ? "eliminada" : "desactivada"} en NotiFinance`;
+  const htmlContent = `
+<div style="font-family: Arial, sans-serif; text-align: center; padding: 30px; background-color: #ffffff;">
+  <div style="max-width: 500px; margin: auto; background: #ffffff; padding: 30px 25px; border-radius: 10px; box-shadow: 0 0 15px rgba(255, 0, 0, 0.12);">
+    <img src="https://itt0resources.blob.core.windows.net/notifinance/1.png" alt="NotiFinance" style="max-width: 140px; margin-bottom: 25px;">
+    <h2 style="color: #ff4d4f; margin-bottom: 10px;">${tipo === "eliminada" ? "⚠️ Cuenta eliminada" : "⚠️ Cuenta desactivada"}</h2>
+    <p style="color: #444; font-size: 16px; margin-bottom: 15px;">
+      Hola <strong>${username}</strong>,<br>
+      Tu cuenta ha sido ${tipo === "eliminada" ? "eliminada" : "desactivada"} por el equipo de NotiFinance.
+    </p>
+    <p style="color: #444; font-size: 15px; margin-bottom: 25px;">
+      Si crees que esto es un error o necesitas más información, por favor <a href="mailto:notifinance.mx@gmail.com" style="color: #ffa500; text-decoration: none;">contáctanos</a>.
+    </p>
+    <hr style="border: none; border-top: 1px solid #ffcc99; margin: 30px 0;">
+    <p style="margin-top: 20px; font-size: 12px; color: #999;">
+      © 2025 NotiFinance · Todos los derechos reservados.
+    </p>
+  </div>
+</div>
+  `;
+  const emailSendUrl = `https://ntemail.onrender.com/sendStyle/${email}`;
+  const headers = {
+    Authorization: `Bearer NotifinanceTK`,
+    "Content-Type": "application/json"
+  };
+  try {
+    await axios.post(emailSendUrl, { content: htmlContent, subject }, { headers });
+  } catch (err) {
+    console.error("❌ Error enviando correo de eliminación:", err.message);
+  }
+}
+
+async function sendUserReactivatedEmail(email, username) {
+  const subject = "¡Tu cuenta ha sido reactivada en NotiFinance!";
+  const htmlContent = `
+<div style="font-family: Arial, sans-serif; text-align: center; padding: 30px; background-color: #ffffff;">
+  <div style="max-width: 500px; margin: auto; background: #ffffff; padding: 30px 25px; border-radius: 10px; box-shadow: 0 0 15px rgba(82, 196, 26, 0.12);">
+    <img src="https://itt0resources.blob.core.windows.net/notifinance/1.png" alt="NotiFinance" style="max-width: 140px; margin-bottom: 25px;">
+    <h2 style="color: #52c41a; margin-bottom: 10px;">✅ Cuenta reactivada</h2>
+    <p style="color: #444; font-size: 16px; margin-bottom: 15px;">
+      Hola <strong>${username}</strong>,<br>
+      ¡Tu cuenta ha sido reactivada exitosamente! Ya puedes volver a acceder a todos los servicios de NotiFinance.
+    </p>
+    <p style="color: #444; font-size: 15px; margin-bottom: 25px;">
+      Si tienes alguna pregunta, por favor <a href="mailto:notifinance.mx@gmail.com" style="color: #ffa500; text-decoration: none;">contáctanos</a>.
+    </p>
+    <hr style="border: none; border-top: 1px solid #b7eb8f; margin: 30px 0;">
+    <p style="margin-top: 20px; font-size: 12px; color: #999;">
+      © 2025 NotiFinance · Todos los derechos reservados.
+    </p>
+  </div>
+</div>
+  `;
+  const emailSendUrl = `https://ntemail.onrender.com/sendStyle/${email}`;
+  const headers = {
+    Authorization: `Bearer NotifinanceTK`,
+    "Content-Type": "application/json"
+  };
+  try {
+    await axios.post(emailSendUrl, { content: htmlContent, subject }, { headers });
+  } catch (err) {
+    console.error("❌ Error enviando correo de reactivación:", err.message);
+  }
+}

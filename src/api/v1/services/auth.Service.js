@@ -193,7 +193,7 @@ export const registerService = async (username, email, password) => {
       plan: 'Freemium',
       price: "$0.00/mes",
       status: 'active',
-      expiresAt: expiresAt,
+      expiresAt: null,
       paymentMethod: 'none',
       nextBillingDate: expiresAt
     });

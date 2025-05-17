@@ -22,7 +22,8 @@ const subscriptionSchema = new mongoose.Schema({
   },
   expiresAt: {
     type: Date,
-    required: true
+    required: false, 
+    default: null   
   },
   autoRenew: {
     type: Boolean,

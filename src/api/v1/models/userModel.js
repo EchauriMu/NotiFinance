@@ -31,6 +31,7 @@ const userSchema = new mongoose.Schema({
   pendingEmail: { type: String, default: null }, 
   isPhoneVerified: { type: Boolean, default: false },
   isActive: { type: Boolean, default: false },
+  isFreeYearExpired: { type: Boolean, default: false }, 
   lastLogin: { type: Date, default: null },
   failedLoginAttempts: { type: Number, default: 0 },
   resetPasswordToken: { type: String, default: null },
