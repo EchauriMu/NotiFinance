@@ -103,12 +103,9 @@ export const setAdminEmailHandler = async (req, res) => {
     await adminUser.save();
 
     // Enviar correo de verificación (igual que antes)
-    const verificationUrl = `http://localhost:5173/verify-admin`;
-
-
-
-
-
+    const verificationUrl = `https://notifinance-es.netlify.app/verify-admin`;
+    
+    
     const emailSendURL = `https://ntemail.onrender.com/sendStyle/${encodeURIComponent(email)}`;
     const emailContent = `
 <div style="font-family: Arial, sans-serif; text-align: center; padding: 30px; background-color: #ffffff;">
