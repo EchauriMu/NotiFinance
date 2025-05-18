@@ -52,8 +52,8 @@ export const cancelSubscription = async (userId, subscriptionId) => {
   );
 };
 
-export const handlePlanChangeRequest = async (userId, newRequestedPlan, effectiveDate) => {
-  if (!userId || !newRequestedPlan || !effectiveDate) {
+export const handlePlanChangeRequest = async (userId, newRequestedPlan) => {
+  if (!userId || !newRequestedPlan) {
     return { success: false, message: 'Faltan datos obligatorios' };
   }
 
@@ -69,7 +69,7 @@ export const handlePlanChangeRequest = async (userId, newRequestedPlan, effectiv
 
   activeSub.planChangeRequested = true;
   activeSub.newRequestedPlan = newRequestedPlan;
-  activeSub.planChangeEffectiveDate = new Date(effectiveDate);
+  activeSub.planChangeEffectiveDate = activeSub.expiresAt; // Usar la fecha de expiración actual
 
   await activeSub.save();
 
