@@ -54,7 +54,8 @@ export const getAlertById = async (req, res) => {
 export const createAlert = async (req, res) => {
   try {
     const userId = req.userTk.id; // Obtener userId del token
-    const alertData = { ...req.body, userId }; // Agregar userId a los datos de la alerta
+    const username = req.userTk.username; // Obtener username del token
+    const alertData = { ...req.body, userId, username }; // Agregar userId y username a los datos de la alerta
 
     const newAlert = await alertService.createAlert(alertData);
     res.status(201).json(newAlert);

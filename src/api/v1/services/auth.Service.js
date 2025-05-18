@@ -10,7 +10,7 @@ import axios from 'axios';
 
 
 // Función para generar un token JWT
-const generateToken = (userData, plan) => {
+const generateToken = (userData) => {
   const payload = {
     id: userData._id,
     username: userData.username,
@@ -39,7 +39,7 @@ export const loginService = async (username, password) => {
       return { error: "Contraseña incorrecta", status: 401 };
     }
 
-    const token = generateToken(user); // ← Eliminado el segundo parámetro (userPlan)
+    const token = generateToken(user); 
     return { token, user: { id: user._id, username: user.username, role: user.role }, status: 200 };
   } catch (error) {
     console.error("❌ Error en loginService:", error.message);
