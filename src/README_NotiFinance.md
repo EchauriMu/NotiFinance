@@ -4,6 +4,24 @@
 
 NotiFinance es una herramienta poderosa para desarrolladores, diseñada para facilitar la gestión de criptomonedas y mejorar la experiencia del usuario mediante un conjunto de funcionalidades avanzadas.
 
+---
+
+## INTEGRANTES:
+
+-ECHAURI MUÑOZ EDUARDO
+-HERNANDEZ ARVIZU DULCE ADILENE
+-OROZCO ESTARRON AMIR
+-PARDO PEREZ SERGIO ALBERTO
+
+---
+
+## LINK VIDEO:
+
+[VIDEO](https://youtu.be/NtXLnGjBiJU)
+
+---
+
+
 > 🔗 **Este proyecto requiere también el frontend alojado en el siguiente repositorio:**  
 > [https://github.com/EchauriMu/NotiFinance-Front](https://github.com/EchauriMu/NotiFinance-Front)
 
