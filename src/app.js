@@ -45,11 +45,14 @@ const api = config.API_URL;
 
 app.get(`${api}`, (req,res)=>{
   res.send(
-      `<h1>RESTful running in root</h1> <p> NT: <b>${api}/api-docs</b> for more information.</p>`
+      `<h1>Backend de NotiFinance</h1> <p> NT: <b>${api}/api-docs</b> for more information.</p>`
   );
 })
 
 // Swagger Docs
+
+
+
 
 // Middleware para el manejo de errores
 app.use((err, req, res, next) => {
