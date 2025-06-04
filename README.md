@@ -8,10 +8,10 @@ NotiFinance es una herramienta poderosa para desarrolladores, diseñada para fac
 
 ## INTEGRANTES:
 
--**ECHAURI MUÑOZ EDUARDO**
--**HERNANDEZ ARVIZU DULCE ADILENE**
--**OROZCO ESTARRON AMIR**
--**PARDO PEREZ SERGIO ALBERTO**
+- **ECHAURI MUÑOZ EDUARDO**
+- **HERNANDEZ ARVIZU DULCE ADILENE**
+- **OROZCO ESTARRON AMIR**
+- **PARDO PEREZ SERGIO ALBERTO**
 
 ---
 
