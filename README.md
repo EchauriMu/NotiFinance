@@ -1,6 +1,6 @@
 # 🚀 NotiFinance
 
-**Empower Your Financial Insights, Effortlessly Connect Today**
+**✨ Empodera tu futuro financiero con alertas en tiempo real**
 
 NotiFinance es una herramienta poderosa para desarrolladores, diseñada para facilitar la gestión de criptomonedas y mejorar la experiencia del usuario mediante un conjunto de funcionalidades avanzadas.
 
@@ -107,32 +107,6 @@ npm test
 
 ---
 
-## 📁 Estructura del Proyecto
-
-> Documentación completa del código próximamente...
-
----
-
-## 🔮 Próximos Pasos
-
-- [ ] Documentación completa de la API
-- [ ] Mejora del sistema de notificaciones
-- [ ] Integración de nuevos exchanges
-
----
-
-## 🤝 Contribuciones
-
-¡Las contribuciones son bienvenidas! Abre un *issue* o envía un *pull request*.
-
----
-
-## 🪪 Licencia
-
-Este proyecto está licenciado bajo los términos de la **MIT License**.
-
----
-
 ## 🙏 Agradecimientos
 
-Gracias al equipo de desarrollo y a todas las tecnologías que lo hicieron posible.
+Gracias maestro Irving por todo 🤝
