@@ -36,10 +36,6 @@ NotiFinance es una herramienta poderosa para desarrolladores, diseñada para fac
   - [🔧 Instalación](#instalación)
   - [▶️ Uso](#uso)
   - [🧪 Pruebas](#pruebas)
-- [📁 Estructura del Proyecto](#estructura-del-proyecto)
-- [🔮 Próximos Pasos](#próximos-pasos)
-- [🤝 Contribuciones](#contribuciones)
-- [🪪 Licencia](#licencia)
 - [🙏 Agradecimientos](#agradecimientos)
 
 ---
